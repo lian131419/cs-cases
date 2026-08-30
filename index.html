@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长松咨询 · 案例大数据系统（网页版）</title>
+<style>
+  :root{
+    --navy:#16324f; --navy2:#1e4266; --gold:#c8a45a; --gold2:#a9843f;
+    --bg:#f4f6f9; --card:#ffffff; --line:#e3e8ef; --text:#22303f; --muted:#7a8794;
+    --red:#c0392b; --green:#1e8e5a; --blue:#2f6fb3; --orange:#d67a1e; --purple:#7a5fb0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 18px 60px}
+
+  /* 头部 */
+  header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:20px 0 0;box-shadow:0 2px 10px rgba(22,50,79,.25)}
+  .head-in{max-width:1180px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff}
+  .logo h1{font-size:19px;letter-spacing:1px}
+  .logo p{font-size:12px;color:#a9c1d9;margin-top:2px}
+  .head-stat{display:flex;gap:18px;font-size:12px;color:#c6d5e5}
+  .head-stat b{display:block;font-size:18px;color:#fff;text-align:center}
+
+  nav{max-width:1180px;margin:16px auto 0;padding:0 18px;display:flex;gap:4px;flex-wrap:wrap}
+  nav button{background:transparent;border:none;color:#b9cce0;padding:10px 16px;font-size:14px;cursor:pointer;border-radius:8px 8px 0 0;transition:.15s;font-family:inherit}
+  nav button:hover{color:#fff;background:rgba(255,255,255,.08)}
+  nav button.active{color:#fff;background:var(--bg);color:var(--navy);font-weight:600}
+
+  main{margin-top:20px}
+  .view{display:none}
+  .view.active{display:block}
+  .view-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px}
+  .view-sub{color:var(--muted);font-size:12.5px;margin-bottom:16px}
+
+  /* 卡片 / 面板 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(22,50,79,.05)}
+  .card h3{font-size:14px;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .card h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block}
+  .grid{display:grid;gap:16px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
+
+  /* 指标块 */
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .metric .num{font-size:30px;font-weight:800;color:var(--navy);line-height:1.2}
+  .metric .lab{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .metric .sub{font-size:11.5px;color:var(--gold2);margin-top:2px}
+
+  /* 条形图 */
+  .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .bar-lab{width:150px;font-size:12.5px;color:var(--text);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-track{flex:1;background:#eef1f5;border-radius:6px;height:22px;position:relative;overflow:hidden}
+  .bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--navy2),var(--gold));min-width:2px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-size:11.5px;font-weight:600;transition:width .4s}
+  .bar-num{width:36px;font-size:12.5px;color:var(--muted);flex-shrink:0}
+  .bar-num b{color:var(--navy)}
+  .bar-lab.sm{width:110px}
+
+  /* 标签 */
+  .tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;margin:2px 3px 2px 0;background:#eef3fa;color:var(--navy2);border:1px solid #d8e3f0;white-space:nowrap}
+  .tag.pain{background:#fdf0ee;color:#b3402f;border-color:#f3d5cf}
+  .tag.sol{background:#eef8f2;color:#1e7d52;border-color:#cfeadd}
+  .tag.mod{background:#f4f0fa;color:#6b54a8;border-color:#e2d9f2}
+  .tag.kb{background:#fdf6e8;color:#a57b22;border-color:#f0e2c2}
+
+  /* 表格 */
+  table.rt{width:100%;border-collapse:collapse;font-size:13px}
+  table.rt th{background:var(--navy);color:#fff;padding:9px 10px;text-align:left;font-weight:600;position:sticky;top:0}
+  table.rt td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.rt tr:hover td{background:#f7fafc}
+  .num-cell{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* 按钮 / 表单 */
+  .btn{display:inline-block;padding:8px 18px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-size:13.5px;cursor:pointer;font-family:inherit;transition:.15s}
+  .btn:hover{background:var(--navy2)}
+  .btn.gold{background:var(--gold)}
+  .btn.gold:hover{background:var(--gold2)}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--navy)}
+  .btn.danger{background:#fff;color:var(--red);border:1px solid #e8c9c4}
+  .btn.danger:hover{background:var(--red);color:#fff}
+  .btn.sm{padding:4px 10px;font-size:12px;border-radius:6px}
+  input[type=text],input[type=number],input[type=search],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--text)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+  textarea{resize:vertical;min-height:64px}
+  label.fl{display:block;font-size:12.5px;color:var(--muted);margin:12px 0 4px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:700px){.form-row{grid-template-columns:1fr}}
+  .chipbox{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .chip{border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-size:12.5px;cursor:pointer;background:#fff;color:var(--muted);user-select:none;transition:.12s}
+  .chip:hover{border-color:var(--gold);color:var(--gold2)}
+  .chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+  /* 筛选条 */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .filters select{width:auto;min-width:110px}
+  .filters input[type=search]{width:220px}
+  .searchbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+  /* 案例卡片 */
+  .case-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:.15s}
+  .case-card:hover{border-color:var(--gold);box-shadow:0 3px 12px rgba(22,50,79,.12)}
+  .case-card .c-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .case-card .c-name{font-size:15px;font-weight:700;color:var(--navy)}
+  .case-card .c-no{font-size:12px;color:var(--gold2);background:#fdf6e8;border-radius:6px;padding:1px 8px}
+  .case-card .c-meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .case-card .c-res{font-size:12.5px;color:#2f6fb3;margin-top:8px;background:#f2f7fc;border-radius:8px;padding:8px 10px}
+  .case-card .c-tags{margin-top:8px}
+
+  /* 弹窗 */
+  .modal-mask{position:fixed;inset:0;background:rgba(15,30,50,.55);display:none;align-items:flex-start;justify-content:center;z-index:99;padding:40px 16px;overflow-y:auto}
+  .modal-mask.show{display:flex}
+  .modal{background:#fff;border-radius:14px;width:760px;max-width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .modal-head h3{font-size:16px;color:var(--navy)}
+  .modal-close{cursor:pointer;font-size:22px;color:var(--muted);background:none;border:none}
+  .modal-body{padding:18px 20px}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+
+  /* 详情 */
+  .kv{display:grid;grid-template-columns:90px 1fr;gap:4px 12px;font-size:13.5px;margin-bottom:6px}
+  .kv .k{color:var(--muted);text-align:right}
+  .kv .v{color:var(--text)}
+  .sec{font-size:13px;font-weight:700;color:var(--navy);margin:16px 0 8px;padding-left:10px;border-left:3px solid var(--gold)}
+  .quote{background:#fdf9ef;border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;color:#6b5420;margin-top:8px}
+
+  /* 知识库卡片 */
+  .kb-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+  .kb-card h4{font-size:14.5px;color:var(--navy);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .kb-problem{font-size:13px;color:var(--muted);margin-top:6px}
+  .kb-sol{margin-top:10px;background:#f7fafc;border-radius:10px;padding:12px}
+  .kb-sol .t{font-weight:700;color:var(--gold2);font-size:13px;margin-bottom:6px}
+  .kb-sol ul{margin-left:18px;font-size:13px}
+  .kb-sol li{margin-bottom:3px}
+  .kb-tools{margin-top:8px;font-size:12px;color:var(--muted)}
+  .status{font-size:11.5px;border-radius:6px;padding:1px 8px}
+  .st-done{background:#e8f5ee;color:#1e7d52}
+  .st-learning{background:#fdf3e3;color:#c07a12}
+  .st-todo{background:#fdecec;color:#b3402f}
+
+  /* 学习清单 */
+  .todo-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .todo-item:last-child{border-bottom:none}
+  .todo-no{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+  .todo-no.gold{background:var(--gold)}
+  .todo-body{flex:1}
+  .todo-body b{color:var(--navy)}
+  .todo-body p{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  .muted{color:var(--muted)}
+  .fs12{font-size:12.5px}
+  .mt8{margin-top:8px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}
+  .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .right{justify-content:flex-end}
+  .empty{text-align:center;color:var(--muted);padding:40px 0;font-size:13.5px}
+  .warn{background:#fdf6e8;border:1px solid #f0e2c2;color:#8a6d1f;border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:16px}
+  a{color:var(--blue)}
+  .ph-badge{background:#eaf4fd;color:#2472a4;border-radius:6px;padding:1px 8px;font-size:12px}
+  .ph-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .ph-grid a{display:block}
+  .ph-grid img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}
+  @media(max-width:640px){.ph-grid{grid-template-columns:1fr}}
+  .sim-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.15s}
+  .sim-item:hover{border-color:var(--gold);box-shadow:0 2px 8px rgba(22,50,79,.10)}
+  /* 表单标签页 */
+  .ftabs{display:flex;gap:6px;margin-bottom:14px}
+  .ftabs button{padding:8px 16px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:13px;cursor:pointer;color:var(--muted);font-family:inherit}
+  .ftabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .vg-head{font-size:13px;font-weight:700;color:var(--gold2);margin:14px 0 6px;padding-bottom:4px;border-bottom:1px dashed var(--line)}
+  .v-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+  @media(max-width:720px){.v-grid{grid-template-columns:1fr}}
+  .v-full{margin-top:8px}
+  /* 四象限 */
+  .quad-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .quad{border-radius:10px;padding:10px;border:1px solid var(--line);min-height:120px}
+  .quad h5{font-size:12.5px;margin-bottom:8px;display:flex;justify-content:space-between}
+  .q-hot{background:#fdf0ee;border-color:#eecfc8}.q-hot h5{color:#b3402f}
+  .q-plan{background:#f2f7fc;border-color:#d5e3f2}.q-plan h5{color:#2f6fb3}
+  .q-warm{background:#fdf6e8;border-color:#ecdcb8}.q-warm h5{color:#a57b22}
+  .q-cold{background:#f4f6f9}.q-cold h5{color:var(--muted)}
+  .quad ul{list-style:none;font-size:12.5px}
+  .quad li{margin-bottom:4px;display:flex;justify-content:space-between;gap:6px;cursor:pointer}
+  .quad li:hover{color:var(--gold2)}
+  .pri-score{display:inline-block;min-width:30px;text-align:center;border-radius:8px;padding:0 6px;color:#fff;font-weight:700;font-size:12px}
+  .vg-hint{margin:0 0 10px}
+  .vg-hint summary{cursor:pointer;font-size:12px;color:#a57b22;width:max-content}
+  .vg-hint > div{margin-top:6px;background:#fdf9ef;border-left:3px solid var(--gold);padding:9px 13px;font-size:12.5px;color:#6b5420;border-radius:0 8px 8px 0;white-space:pre-line;line-height:1.7}
+  .pr-alert-strip{border-radius:10px;padding:10px 14px;font-size:13px}
+  .pr-hot{background:#fdf0ee;border:1px solid #eecfc8;color:#b3402f}
+  .pr-ok{background:#eef8f2;border:1px solid #cfeadd;color:#1e7d52}
+  .due-badge{font-size:11px;border-radius:6px;padding:0 7px;color:#fff;margin-right:6px;display:inline-block;vertical-align:1px}
+  .due-over{background:#c0392b}
+  .due-soon{background:#d67a1e}
+  /* 弹窗内部滚动 + 底栏固定（保存按钮始终可见） */
+  .modal{display:flex;flex-direction:column;max-height:calc(100vh - 80px)}
+  .modal-body{overflow-y:auto;flex:1}
+  .modal-foot{flex-shrink:0}
+  /* 拜访日历 */
+  .cal-month{font-weight:700;color:var(--navy);margin:16px 0 6px;padding-left:10px;border-left:3px solid var(--gold)}
+  .cal-item{display:flex;gap:12px;padding:10px 4px;border-bottom:1px dashed var(--line);cursor:pointer;align-items:flex-start}
+  .cal-item:hover{background:#f9fbfd}
+  .cal-dot{width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:7px;flex-shrink:0}
+  /* 话术金句 */
+  .qt-card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+  .qt-card .q{font-size:14px;line-height:1.7}
+  .qt-card .a{margin-top:8px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  /* 手机端适配 */
+  @media(max-width:640px){
+    .head-stat{display:none}
+    nav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding:0 10px}
+    nav button{white-space:nowrap;padding:10px 13px;font-size:13.5px;flex-shrink:0}
+    .wrap{padding:0 12px 40px}
+    .btn{min-height:40px}
+    .btn.sm{min-height:32px}
+    .bar-lab{width:96px;font-size:12px}
+    .filters{flex-direction:column;align-items:stretch}
+    .filters select,.filters input[type=search],.searchbar input[type=search]{width:100%}
+    .searchbar{flex-direction:column;align-items:stretch}
+    .modal-mask{padding:10px 6px}
+    .modal{max-height:calc(100vh - 20px)}
+    .modal-body{padding:14px}
+    .modal-head{padding:12px 14px}
+    .modal-foot{padding:10px 14px}
+    .metric .num{font-size:24px}
+    .logo h1{font-size:16px}
+    .ftabs{overflow-x:auto}
+    .ftabs button{flex-shrink:0}
+    .cal-item{padding:8px 2px}
+    .view-title{font-size:15px}
+  }
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <div class="logo">
+      <div class="mark">长</div>
+      <div>
+        <h1>长松咨询 · 案例大数据系统</h1>
+        <p>走访 / 服务案例库 · 问题雷达 · 知识库 · 学习方向</p>
+      </div>
+    </div>
+    <div class="head-stat">
+      <div><b id="hs-cases">0</b>案例总数</div>
+      <div><b id="hs-problem">0</b>问题标签</div>
+      <div><b id="hs-industry">0</b>覆盖行业</div>
+      <div><b id="hs-prov">0</b>覆盖省市</div>
+    </div>
+  </div>
+  <nav id="nav">
+    <button data-v="overview" class="active">📊 总览</button>
+    <button data-v="radar">📈 问题雷达</button>
+    <button data-v="library">📁 案例库</button>
+    <button data-v="priority">🔥 跟进优先级</button>
+    <button data-v="calendar">📅 拜访日历</button>
+    <button data-v="kb">🧰 知识库</button>
+    <button data-v="quotes">💬 话术金句</button>
+    <button data-v="learning">🎯 学习方向</button>
+    <button data-v="data">💾 数据管理</button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ 总览 ============ -->
+  <section id="view-overview" class="view active">
+    <div class="view-title">案例库总览</div>
+    <div class="view-sub">你的走访与服务案例全景：覆盖了多少企业、分布在哪些地区行业、合作了哪些模块、产生了什么成果。</div>
+
+    <div class="grid g4" id="ov-metrics"></div>
+
+    <div class="grid g2 mt16">
+      <div class="card">
+        <h3><span class="dot"></span>企业最需要调整的问题 TOP 10</h3>
+        <div id="ov-pain-bars"></div>
+        <div class="legend"><span><i style="background:#16324f"></i>问题出现频次（一个案例可命中多个问题）</span></div>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>长松解决方案使用 TOP 10</h3>
+        <div id="ov-sol-bars"></div>
+        <div class="legend"><span><i style="background:#c8a45a"></i>方案落地频次</span></div>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="dot"></span>地区分布（省份）</h3>
+        <div id="ov-prov-bars"></div>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>行业分布</h3>
+        <div id="ov-ind-bars"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="dot"></span>合作模块分布</h3>
+      <div id="ov-mod-bars"></div>
+    </div>
+  </section>
+
+  <!-- ============ 问题雷达 ============ -->
+  <section id="view-radar" class="view">
+    <div class="view-title">问题雷达 · 企业最需要在什么地方调整</div>
+    <div class="view-sub">把 154+ 个案例的问题全部摊开看：哪些问题最常见、在哪个行业/地区高发、集中在哪些客户群体。这就是你开发客户时的"话术地图"。</div>
+
+    <div class="card">
+      <div class="filters">
+        <select id="rd-prov"><option value="">全部地区</option></select>
+        <select id="rd-ind"><option value="">全部行业</option></select>
+        <select id="rd-type">
+          <option value="">全部类型</option>
+          <option value="服务案例">服务案例</option>
+          <option value="走访案例">走访案例</option>
+        </select>
+        <button class="btn gold sm" onclick="renderRadar()">刷新</button>
+      </div>
+      <div class="warn" id="rd-scope"></div>
+      <div id="rd-bars"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="dot"></span>问题组合分析 · 哪些问题总是结伴出现</h3>
+      <div class="view-sub" style="margin-bottom:8px">当一个企业命中"组织架构混乱"时，通常还伴随哪些问题？这帮你判断：见到一个客户，应该往哪个方向深挖。</div>
+      <div id="rd-pairs"></div>
+    </div>
+  </section>
+
+  <!-- ============ 案例库 ============ -->
+  <section id="view-library" class="view">
+    <div class="flex" style="justify-content:space-between;align-items:flex-end">
+      <div>
+        <div class="view-title">案例库</div>
+        <div class="view-sub">全部走访 / 服务案例，可搜索、筛选、查看详情、编辑，并随时新增新案例。</div>
+      </div>
+      <button class="btn gold" onclick="openCaseForm()">＋ 新增案例</button>
+    </div>
+
+    <div class="card mt16">
+      <div class="searchbar">
+        <input type="search" id="lb-search" placeholder="搜索公司名 / 城市 / 行业 / 关键词…" oninput="renderLibrary()">
+        <select id="lb-prov" onchange="renderLibrary()"><option value="">全部地区</option></select>
+        <select id="lb-ind" onchange="renderLibrary()"><option value="">全部行业</option></select>
+        <select id="lb-pain" onchange="renderLibrary()"><option value="">全部问题</option></select>
+        <select id="lb-sol" onchange="renderLibrary()"><option value="">全部方案</option></select>
+        <select id="lb-type" onchange="renderLibrary()">
+          <option value="">全部类型</option>
+          <option value="服务案例">服务案例</option>
+          <option value="走访案例">走访案例</option>
+        </select>
+        <span class="muted fs12" id="lb-count"></span>
+      </div>
+    </div>
+
+    <div id="lb-list"></div>
+  </section>
+
+  <!-- ============ 跟进优先级 ============ -->
+  <section id="view-priority" class="view">
+    <div class="view-title">跟进优先级 · 重要性 × 急迫度</div>
+    <div class="view-sub">来自拜访诊断单里的两个打分（1-10 分）：两分相乘 = 跟进指数。已过节点和 7 天内到节点的自动置顶。</div>
+    <div id="pr-alerts" class="mt16"></div>
+
+    <div class="grid g2 mt16">
+      <div class="card">
+        <h3><span class="dot"></span>商机四象限</h3>
+        <div id="pr-quadrant" class="quad-wrap"></div>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>跟进排行 · 缔结要素提醒</h3>
+        <div id="pr-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 拜访日历 ============ -->
+  <section id="view-calendar" class="view">
+    <div class="view-title">拜访日历 · 什么时候见了谁</div>
+    <div class="view-sub">按诊断单的「拜访时间」自动生成时间轴。回填诊断单越多，这条线越完整。</div>
+    <div class="grid g3 mt16" id="cal-metrics"></div>
+    <div class="card mt16" id="cal-body"></div>
+  </section>
+
+  <!-- ============ 话术金句 ============ -->
+  <section id="view-quotes" class="view">
+    <div class="view-title">话术金句库 · 客户原话即武器</div>
+    <div class="view-sub">两批案例文档中的客户原话（逐字保留）+ 你在案例「老板金句」字段里新增的内容。开发客户时，一句同行的原话胜过十页方案。</div>
+    <div class="card mt16">
+      <div class="searchbar">
+        <input type="search" id="qt-search" placeholder="搜索金句 / 企业名 / 主题…" oninput="renderQuotes()">
+        <select id="qt-theme" onchange="renderQuotes()"><option value="">全部主题</option></select>
+        <span class="muted fs12" id="qt-count"></span>
+      </div>
+    </div>
+    <div id="qt-list"></div>
+  </section>
+
+  <!-- ============ 知识库 ============ -->
+  <section id="view-kb" class="view">
+    <div class="flex" style="justify-content:space-between;align-items:flex-end">
+      <div>
+        <div class="view-title">知识库</div>
+        <div class="view-sub" id="kb-subdesc">每个常见问题对应长松的标准解法、落地动作、工具与话术。系统预置了从案例中提炼的 18 个主题，可随时补充自己的知识。</div>
+      </div>
+      <button class="btn gold" id="kb-addbtn" onclick="openKbForm()">＋ 新增知识条目</button>
+    </div>
+    <div class="ftabs mt16">
+      <button id="kbt-sol" class="on" onclick="kbSwitch('sol')">问题→解法库</button>
+      <button id="kbt-playbook" onclick="kbSwitch('playbook')">九大模块痛点库</button>
+      <button id="kbt-consult" onclick="kbSwitch('consult')">顾问式拜访模型</button>
+    </div>
+    <div id="kb-list"></div>
+    <div id="kb-playbook" style="display:none"></div>
+    <div id="kb-consult" style="display:none"></div>
+  </section>
+
+  <!-- ============ 学习方向 ============ -->
+  <section id="view-learning" class="view">
+    <div class="view-title">学习方向 · 数据驱动的成长地图</div>
+    <div class="view-sub">基于你的案例数据，系统告诉你：哪些问题你已经很熟（高频命中=重点掌握）、哪些是你还没见过的盲区（该补课/该开发）、哪个行业值得深耕。</div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="dot"></span>① 核心能力 · 高频问题必须吃透</h3>
+        <div id="ln-core"></div>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>② 空白领域 · 案例少 = 你的机会</h3>
+        <div id="ln-gap"></div>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="dot"></span>③ 行业深耕建议</h3>
+        <div id="ln-ind"></div>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>④ 我的学习清单（可编辑）</h3>
+        <div class="flex right mb8"><button class="btn ghost sm" onclick="addTodo()">＋ 添加</button></div>
+        <div id="ln-todo"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="dot"></span>⑤ 长松产品线 · 从案例看你的"第二单"机会</h3>
+      <div class="view-sub" style="margin-bottom:8px">企业最常先上"组织系统"，之后会续单哪些模块？数据告诉你交叉销售机会。</div>
+      <div id="ln-upsell"></div>
+    </div>
+  </section>
+
+  <!-- ============ 数据管理 ============ -->
+  <section id="view-data" class="view">
+    <div class="view-title">数据管理</div>
+    <div class="view-sub">你的数据保存在本机浏览器里，不会上传。请定期导出备份，换电脑或换浏览器时导入即可继续。</div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="dot"></span>导出备份</h3>
+        <div id="bk-strip" class="mb8"></div>
+        <p class="fs12 muted mb8">导出当前全部案例 + 知识库 + 学习清单为一个 JSON 文件。建议每次录入一批新案例后备份一次。</p>
+        <button class="btn" onclick="exportAll()">⬇ 导出全部数据</button>
+        <div class="mt16">
+          <h3><span class="dot"></span>导入数据</h3>
+          <p class="fs12 muted mb8">选择之前导出的 JSON 文件，可以合并（追加）或覆盖。</p>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importFile(event)">
+          <div class="flex">
+            <button class="btn gold" onclick="document.getElementById('import-file').click()">⬆ 选择文件导入</button>
+            <select id="imp-mode">
+              <option value="merge">合并（保留现有+追加）</option>
+              <option value="replace">覆盖（清空后导入）</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>数据状态</h3>
+        <div id="dv-state"></div>
+        <div class="mt16">
+          <h3><span class="dot"></span>导入拜访记录表（.xlsx）</h3>
+          <p class="fs12 muted mb8">选择填好的《拜访客户记录表》xlsx（系统导出的回执或在 Excel 中编辑过的均可）。按公司名/编号匹配已有案例回填诊断单，匹配不到则新建。</p>
+          <input type="file" id="xls-import" accept=".xlsx" style="display:none" onchange="onXlsImport(this)">
+          <div class="flex">
+            <button class="btn gold" onclick="document.getElementById('xls-import').click()">⬆ 选择 xlsx 导入</button>
+            <span class="fs12 muted" id="xls-result"></span>
+          </div>
+        </div>
+        <div class="mt16">
+          <h3><span class="dot"></span>危险操作</h3>
+          <p class="fs12 muted mb8">恢复为系统初始的 154 个案例种子数据（会清空你录入的内容）。</p>
+          <button class="btn danger" onclick="resetAll()">↺ 恢复初始数据</button>
+        </div>
+        <div class="mt16">
+          <h3><span class="dot"></span>标签词典（规范）</h3>
+          <p class="fs12 muted mb8">录入时系统会自动把相近说法归一到这套标准标签，保证分析口径一致。</p>
+          <details><summary class="muted fs12" style="cursor:pointer">查看问题标签（21 类）</summary><div id="dv-pain-dict" class="fs12 mt8"></div></details>
+          <details><summary class="muted fs12" style="cursor:pointer">查看方案标签（19 类）</summary><div id="dv-sol-dict" class="fs12 mt8"></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 详情弹窗 -->
+<div class="modal-mask" id="detail-mask" onclick="if(event.target===this)closeModal('detail-mask')">
+  <div class="modal">
+    <div class="modal-head"><h3 id="dt-title">案例详情</h3><button class="modal-close" onclick="closeModal('detail-mask')">×</button></div>
+    <div class="modal-body" id="dt-body"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="printCase()">🖨 打印调研单</button>
+      <button class="btn ghost" onclick="exportVisitExcel()">⬇ 导出Excel回执</button>
+      <button class="btn ghost" onclick="editCurrentCase()">✎ 编辑</button>
+      <button class="btn danger" onclick="deleteCurrentCase()">删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增/编辑弹窗 -->
+<div class="modal-mask" id="form-mask" onclick="if(event.target===this)closeModal('form-mask')">
+  <div class="modal" style="width:860px">
+    <div class="modal-head"><h3 id="fm-title">新增案例</h3><button class="modal-close" onclick="closeModal('form-mask')">×</button></div>
+    <div class="modal-body" id="fm-body"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal('form-mask')">取消</button>
+      <button class="btn gold" onclick="saveCaseForm()">保存案例</button>
+    </div>
+  </div>
+</div>
+
+<!-- 知识库编辑弹窗 -->
+<div class="modal-mask" id="kbform-mask" onclick="if(event.target===this)closeModal('kbform-mask')">
+  <div class="modal" style="width:860px">
+    <div class="modal-head"><h3 id="kbf-title">编辑知识条目</h3><button class="modal-close" onclick="closeModal('kbform-mask')">×</button></div>
+    <div class="modal-body" id="kbf-body"></div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal('kbform-mask')">取消</button>
+      <button class="btn gold" onclick="saveKbForm()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var SEED_CASES = [{"no":154,"c":"客户 #154","city":"南京","prov":"江苏","ind":"汽车零部件","year":2020,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","绩效考核流于形式","团队积极性低","二代接班传承","成本利润压力"],"sol":["组织架构梳理","流程标准化·手册","薪酬体系设计","绩效考核落地","目标管理闭环"],"res":"年产值翻番，形成“目标-流程-职责-绩效-薪酬”闭环管理体系，老板5年跑40多场马拉松","t":"","quote":""},{"no":153,"c":"客户 #153","city":"","prov":"","ind":"照明","year":2025,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","绩效考核流于形式","目标管理缺失","团队积极性低"],"sol":["流程标准化·手册","组织架构梳理","绩效考核落地","目标管理闭环"],"res":"半年辅导：绩效平均分50+→70+，形成自有经营方法论","t":"","quote":""},{"no":152,"c":"客户 #152","city":"扬州","prov":"江苏","ind":"餐饮连锁","year":2024,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["经验管理依赖","财务糊涂账","组织架构混乱","战略方向模糊","成本利润压力"],"sol":["战略规划·聚焦","组织架构梳理","经营分析会·盯盘","营销体系搭建"],"res":"亏损门店10月起转盈，建立体检表/投资回报率工具，前中后台组织重构","t":"","quote":""},{"no":151,"c":"客户 #151","city":"扬州","prov":"江苏","ind":"餐饮连锁","year":2024,"type":"服务案例","mod":["组织系统","营销系统"],"pain":["战略方向模糊","成本利润压力","部门协同差"],"sol":["战略规划·聚焦","营销体系搭建","经营分析会·盯盘"],"res":"放弃不合理重资产投入，按天按餐复盘，多级盯盘机制","t":"","quote":""},{"no":150,"c":"客户 #150","city":"扬州","prov":"江苏","ind":"餐饮连锁","year":2024,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","团队积极性低","目标管理缺失","管理基础薄弱"],"sol":["薪酬体系设计","目标管理闭环","营销体系搭建","经营分析会·盯盘","组织架构梳理","人才招聘培养"],"res":"淡季11月同比增长近10%，分红与价值创造直接挂钩","t":"","quote":""},{"no":149,"c":"客户 #149","city":"","prov":"江苏","ind":"毛纺服装","year":0,"type":"走访案例","mod":["组织系统"],"pain":["经验管理依赖","管理基础薄弱","文化思想不统一"],"sol":["组织架构梳理","认知升级·系统教育"],"res":"认知理念层面深度交流（徐总：系统外力量才能推动变革）","t":"","quote":""},{"no":148,"c":"客户 #148","city":"","prov":"江苏","ind":"家居日用品制造","year":2021,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","目标管理缺失","团队积极性低","人才梯队断层"],"sol":["薪酬体系设计","财务体系规范","团队协同·责任下沉","目标管理闭环"],"res":"两期合作：抓废品率单指标当月见效，团队从拉不动到主动干","t":"","quote":""},{"no":147,"c":"客户 #147","city":"南通","prov":"江苏","ind":"市政工程/环卫","year":0,"type":"服务案例","mod":["组织系统","利润经营","财务系统"],"pain":["管理基础薄弱","成本利润压力","财务糊涂账","团队积极性低"],"sol":["流程标准化·手册","团队协同·责任下沉","利润经营·独立核算","财务体系规范","经营分析会·盯盘"],"res":"利润稳步提升，十张报表体系，成本管控到极致（自建维修队+智能监控）","t":"","quote":""},{"no":146,"c":"客户 #146","city":"南通","prov":"江苏","ind":"机械加工","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["薪酬体系缺失","团队积极性低","绩效考核流于形式","人才梯队断层"],"sol":["薪酬体系设计","股权激励·分红","经营分析会·盯盘","人才招聘培养"],"res":"业务增长30%左右，从老板推着走到团队推着走","t":"","quote":""},{"no":145,"c":"客户 #145","city":"昆山","prov":"江苏","ind":"非标精密加工","year":2025,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","目标管理缺失","经验管理依赖"],"sol":["组织架构梳理","薪酬体系设计","绩效考核落地","战略规划·聚焦"],"res":"2025年3月起行业下滑下同比增长20%+，员工主动性大幅提升","t":"","quote":""},{"no":144,"c":"客户 #144","city":"","prov":"江苏","ind":"VR/虚拟仿真","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","绩效考核流于形式","战略方向模糊"],"sol":["利润经营·独立核算","薪酬体系设计","经营分析会·盯盘"],"res":"预计增长30%+，激进式变革，经营分析会从季度改月度","t":"","quote":""},{"no":143,"c":"客户 #143","city":"苏州","prov":"江苏","ind":"传动设备制造","year":2024,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["薪酬体系缺失","目标管理缺失","团队积极性低","回款现金流紧张"],"sol":["薪酬体系设计","财务体系规范","目标管理闭环","激励机制设计","团队协同·责任下沉"],"res":"年度业绩增长超40%（同行平均5%），回款率提升约7个百分点","t":"","quote":""},{"no":142,"c":"客户 #142","city":"","prov":"江苏","ind":"文化电商(汉服)","year":0,"type":"服务案例","mod":["组织系统","财务系统","营销系统"],"pain":["管理基础薄弱","成本利润压力","组织架构混乱","战略方向模糊"],"sol":["组织架构梳理","利润经营·独立核算","战略规划·聚焦","目标管理闭环","人才招聘培养"],"res":"月开支百万→30万，单周GMV破110万，2026年锚定1亿目标","t":"","quote":""},{"no":141,"c":"客户 #141","city":"上海","prov":"上海","ind":"光伏线缆","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","部门协同差","财务糊涂账","绩效考核流于形式","经验管理依赖"],"sol":["组织架构梳理","流程标准化·手册","目标管理闭环","数据化·数字化","绩效考核落地","认知升级·系统教育"],"res":"两期合作：管理即数据、数据即决策，老板每天省4小时审批琐事","t":"","quote":""},{"no":140,"c":"客户 #140","city":"上海","prov":"上海","ind":"健康食养(连锁)","year":2025,"type":"服务案例","mod":["营销系统","组织系统"],"pain":["战略方向模糊"],"sol":["战略规划·聚焦","认知升级·系统教育","流程标准化·手册","营销体系搭建"],"res":"从山西迁沪，0到1跑通单店盈利，2026年1月启动全国招商","t":"","quote":""},{"no":139,"c":"客户 #139","city":"嘉兴","prov":"浙江","ind":"医疗器械(血袋)","year":2023,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["绩效考核流于形式","人才梯队断层","经验管理依赖"],"sol":["认知升级·系统教育","绩效考核落地","人才招聘培养"],"res":"管理思维升级：数据思维、责任觉醒，授权更高效","t":"","quote":""},{"no":138,"c":"客户 #138","city":"宁波","prov":"浙江","ind":"家纺外贸","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","成本利润压力","经验管理依赖","人才梯队断层"],"sol":["组织架构梳理","经营分析会·盯盘","人才招聘培养"],"res":"两期合作，行业不景气仍保持增量，无高管流失","t":"","quote":""},{"no":137,"c":"客户 #137","city":"宁波","prov":"浙江","ind":"数字病理/医疗器械","year":2022,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["绩效考核流于形式","部门协同差","团队积极性低"],"sol":["团队协同·责任下沉","激励机制设计","薪酬体系设计","人才招聘培养","目标管理闭环"],"res":"合同额同比+56%，业绩每年30%+增长，爆品迭代速度快一倍","t":"","quote":""},{"no":136,"c":"客户 #136","city":"","prov":"浙江","ind":"体育教育(足球青训)","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["部门协同差","薪酬体系缺失","绩效考核流于形式","经验管理依赖"],"sol":["会议系统","薪酬体系设计","绩效考核落地","经营分析会·盯盘","目标管理闭环"],"res":"5个月打破部门墙，协同效率翻倍，全员盯盘机制","t":"","quote":""},{"no":135,"c":"客户 #135","city":"台州","prov":"浙江","ind":"塑料家居制造","year":0,"type":"服务案例","mod":["组织系统"],"pain":["团队积极性低","目标管理缺失","部门协同差"],"sol":["战略规划·聚焦","营销体系搭建","组织架构梳理","经营分析会·盯盘"],"res":"关税突变下广交会一举拿下1798万订单，PMC模块见效","t":"","quote":""},{"no":134,"c":"客户 #134","city":"诸暨","prov":"浙江","ind":"稀土永磁","year":0,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","管理基础薄弱","团队积极性低"],"sol":["组织架构梳理","经营分析会·盯盘"],"res":"准交率60%→75%（年底冲85-90%），合格率94-95%→96-97%","t":"","quote":""},{"no":133,"c":"客户 #133","city":"","prov":"浙江","ind":"针织制造","year":2021,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","团队积极性低","薪酬体系缺失","人才梯队断层"],"sol":["组织架构梳理","人才招聘培养","经营分析会·盯盘","薪酬体系设计"],"res":"老板解放（外出十天半月公司正常运转），决策有据，从个体户思维到企业家思维","t":"","quote":""},{"no":132,"c":"客户 #132","city":"杭州","prov":"浙江","ind":"产业园运营","year":2024,"type":"服务案例","mod":["财务系统","组织系统"],"pain":["财务糊涂账","管理基础薄弱","经验管理依赖"],"sol":["财务体系规范","薪酬体系设计","经营分析会·盯盘","战略规划·聚焦"],"res":"招商/财务岗位激励落地，经营分析会常态化，明确以服务为主转型","t":"","quote":""},{"no":131,"c":"客户 #131","city":"义乌","prov":"浙江","ind":"国际物流","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","人才梯队断层","管理基础薄弱","战略方向模糊"],"sol":["薪酬体系设计","团队协同·责任下沉","战略规划·聚焦","经营分析会·盯盘"],"res":"薪酬机制升级，战略聚焦，团队可复制","t":"","quote":""},{"no":130,"c":"客户 #130","city":"义乌","prov":"浙江","ind":"体育培训连锁","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["团队积极性低","绩效考核流于形式","人才梯队断层"],"sol":["激励机制设计","绩效考核落地","人才招聘培养","经营分析会·盯盘"],"res":"三期辅导：出勤率、复购率大幅提升，机制迭代成“宇特定制版”","t":"","quote":""},{"no":129,"c":"客户 #129","city":"","prov":"浙江","ind":"毛纺织纱线","year":0,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","目标管理缺失","文化思想不统一"],"sol":["目标管理闭环","经营分析会·盯盘","股权激励·分红"],"res":"二期辅导：数据公开透明，结果导向深入人心","t":"","quote":""},{"no":128,"c":"客户 #128","city":"","prov":"浙江","ind":"电子手表制造","year":2019,"type":"服务案例","mod":["组织系统","营销系统"],"pain":["文化思想不统一","绩效考核流于形式","团队积极性低"],"sol":["薪酬体系设计","企业文化·学习型组织","营销体系搭建","经营分析会·盯盘"],"res":"主管级以上留存率95%，员工主动要求调高目标","t":"","quote":""},{"no":127,"c":"客户 #127","city":"兰溪","prov":"浙江","ind":"纺织新材料/健康穿戴","year":0,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","目标管理缺失","团队积极性低","组织架构混乱"],"sol":["组织架构梳理","经营分析会·盯盘","绩效考核落地","薪酬体系设计"],"res":"去年237%增长率，老板每月仅到公司1-2天","t":"","quote":""},{"no":126,"c":"客户 #126","city":"南京","prov":"江苏","ind":"摄影服务(平台)","year":2024,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["管理基础薄弱","会议决策低效","薪酬体系缺失","财务糊涂账"],"sol":["会议系统","股权激励·分红","薪酬体系设计"],"res":"会议提效，分红机制落地，项目负责人成为小CEO","t":"","quote":""},{"no":125,"c":"客户 #125","city":"","prov":"安徽","ind":"化工制造","year":2024,"type":"服务案例","mod":["组织系统","营销系统"],"pain":["组织架构混乱","绩效考核流于形式","团队积极性低"],"sol":["激励机制设计","组织架构梳理","经营分析会·盯盘","人才招聘培养"],"res":"销售额利润双增长，年增长率15%-18%，行业低迷中突出","t":"","quote":""},{"no":124,"c":"客户 #124","city":"","prov":"江苏","ind":"现代农业","year":0,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","目标管理缺失","管理基础薄弱"],"sol":["组织架构梳理","数据化·数字化","经营分析会·盯盘"],"res":"集团化转型，核心事务24小时内响应","t":"","quote":""},{"no":123,"c":"客户 #123","city":"榆林","prov":"陕西","ind":"能源(国企)","year":0,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","绩效考核流于形式","薪酬体系缺失","人才梯队断层"],"sol":["组织架构梳理","绩效考核落地","薪酬体系设计","认知升级·系统教育"],"res":"考核薪酬机制建立，管理层主动思考，内部管理提分","t":"","quote":""},{"no":122,"c":"客户 #122","city":"","prov":"陕西","ind":"矿山建设工程","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","绩效考核流于形式","薪酬体系缺失"],"sol":["流程标准化·手册","目标管理闭环","薪酬体系设计","绩效考核落地"],"res":"考核有理有据，管理向“自动运行”靠近，老板能抓大放小","t":"","quote":""},{"no":121,"c":"客户 #121","city":"府谷","prov":"陕西","ind":"煤化工","year":2016,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","会议决策低效","薪酬体系缺失","目标管理缺失"],"sol":["目标管理闭环","会议系统","薪酬体系设计","绩效考核落地","团队协同·责任下沉"],"res":"十年合作，榆林区域管理参访样板","t":"","quote":""},{"no":120,"c":"客户 #120","city":"神木","prov":"陕西","ind":"煤化工(煤炭深加工)","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","变革阻力大","管理基础薄弱"],"sol":["目标管理闭环","组织架构梳理","团队协同·责任下沉","战略规划·聚焦"],"res":"157人团队责任清晰，老板负担明显减轻","t":"","quote":""},{"no":119,"c":"客户 #119","city":"榆林","prov":"陕西","ind":"休闲食品商贸","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","回款现金流紧张","绩效考核流于形式","经验管理依赖"],"sol":["组织架构梳理","财务体系规范","绩效考核落地"],"res":"仓库损耗从每月大几百→几十元，现金流良性","t":"","quote":""},{"no":118,"c":"客户 #118","city":"","prov":"陕西","ind":"铝材生产","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","组织架构混乱","财务糊涂账","经验管理依赖"],"sol":["组织架构梳理","绩效考核落地"],"res":"部门职责清晰、责任到人，反馈速度大幅提升","t":"","quote":""},{"no":117,"c":"客户 #117","city":"神木","prov":"陕西","ind":"煤化工(焦化)","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["绩效考核流于形式","薪酬体系缺失","管理基础薄弱"],"sol":["绩效考核落地","薪酬体系设计","流程标准化·手册"],"res":"考核客观化，招人不再被漫天要价绑架","t":"","quote":""},{"no":116,"c":"客户 #116","city":"榆林","prov":"陕西","ind":"医疗器械商贸","year":0,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层","团队积极性低","薪酬体系缺失","经验管理依赖"],"sol":["薪酬体系设计","团队协同·责任下沉","绩效考核落地","人才招聘培养","数据化·数字化"],"res":"一年多辅导管理全方位升级，费用差旅大幅节省","t":"","quote":""},{"no":115,"c":"客户 #115","city":"榆林","prov":"陕西","ind":"物业/建筑施工","year":2023,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["管理基础薄弱","文化思想不统一"],"sol":["战略规划·聚焦","组织架构梳理","薪酬体系设计","财务体系规范"],"res":"物业服务营业额翻倍，项目30+→45个，逆势增长","t":"","quote":""},{"no":114,"c":"客户 #114","city":"榆林","prov":"陕西","ind":"医药零售连锁","year":2013,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["战略方向模糊","薪酬体系缺失","成本利润压力"],"sol":["认知升级·系统教育","组织架构梳理","薪酬体系设计","财务体系规范","人才招聘培养"],"res":"5家店→32家连锁，首年节省70多万人工成本，区域排名第二","t":"","quote":""},{"no":113,"c":"客户 #113","city":"榆林","prov":"陕西","ind":"民营医院","year":2018,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["组织架构混乱","管理基础薄弱","薪酬体系缺失","财务糊涂账"],"sol":["组织架构梳理","会议系统","薪酬体系设计","财务体系规范","股权激励·分红"],"res":"院长解放（离院几年运营不受影响），财务规范，成本控制提升","t":"","quote":""},{"no":112,"c":"客户 #112","city":"","prov":"陕西","ind":"文旅运营","year":0,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","战略方向模糊"],"sol":["目标管理闭环","绩效考核落地","薪酬体系设计"],"res":"茶院提成改小组分配制，回本时间预计提前一年","t":"","quote":""},{"no":111,"c":"客户 #111","city":"榆林","prov":"陕西","ind":"外墙保温建材","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","组织架构混乱","成本利润压力"],"sol":["会议系统","目标管理闭环","绩效考核落地","组织架构梳理","数据化·数字化"],"res":"开会不再救火，库存数据实时更新，老板坐办公室掌握项目进展","t":"","quote":""},{"no":110,"c":"客户 #110","city":"榆林","prov":"陕西","ind":"服装制造零售","year":2016,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["绩效考核流于形式","薪酬体系缺失","组织架构混乱","财务糊涂账"],"sol":["薪酬体系设计","绩效考核落地","组织架构梳理","目标管理闭环"],"res":"业绩翻倍，终端网点500+→1300家，2027计划股权+接班人计划","t":"","quote":""},{"no":109,"c":"客户 #109","city":"灵石","prov":"山西","ind":"氧化钙生产","year":2021,"type":"服务案例","mod":["组织系统","利润经营","股权激励"],"pain":["管理基础薄弱","团队积极性低","绩效考核流于形式"],"sol":["绩效考核落地","利润经营·独立核算","股权激励·分红"],"res":"年销1.5亿，降本400万+/年，11名中高层股权激励，员工留得住","t":"","quote":""},{"no":108,"c":"客户 #108","city":"西安","prov":"陕西","ind":"大健康原料出口","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["战略方向模糊","绩效考核流于形式","部门协同差"],"sol":["战略规划·聚焦","目标管理闭环","企业文化·学习型组织"],"res":"业绩翻倍，净利润+60-70%，老板从救火队长变战略领航者","t":"","quote":""},{"no":107,"c":"客户 #107","city":"西安","prov":"陕西","ind":"豆制品加工","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["成本利润压力","变革阻力大","目标管理缺失"],"sol":["营销体系搭建","目标管理闭环","战略规划·聚焦","利润经营·独立核算"],"res":"辅导结束利润+5%、销售+30%，陕西第一家豆制品预包装企业","t":"","quote":""},{"no":106,"c":"客户 #106","city":"西安","prov":"陕西","ind":"老字号食品","year":0,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","战略方向模糊"],"sol":["战略规划·聚焦"],"res":"从个体户到公司化，明确扩张路径与信心","t":"","quote":""},{"no":105,"c":"客户 #105","city":"永济","prov":"山西","ind":"塑料包装(农药瓶)","year":2024,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["成本利润压力","绩效考核流于形式","薪酬体系缺失","组织架构混乱"],"sol":["组织架构梳理","薪酬体系设计","激励机制设计","绩效考核落地","利润经营·独立核算"],"res":"亏损收窄近50%，淘汰30%劣质客户，退租省下100万+/年","t":"","quote":""},{"no":104,"c":"客户 #104","city":"介休","prov":"山西","ind":"文旅景区","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","薪酬体系缺失","成本利润压力","变革阻力大"],"sol":["组织架构梳理","绩效考核落地","数据化·数字化"],"res":"2023-2025营收+50%，餐饮成本率60%→38%","t":"","quote":""},{"no":103,"c":"客户 #103","city":"","prov":"山西","ind":"耐火材料","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","财务糊涂账","绩效考核流于形式","文化思想不统一"],"sol":["目标管理闭环","组织架构梳理","绩效考核落地","营销体系搭建","人才招聘培养"],"res":"两期合作业绩+100%，新客户开发+100%","t":"","quote":""},{"no":102,"c":"客户 #102","city":"太原","prov":"山西","ind":"餐饮连锁(餐车加盟)","year":2024,"type":"服务案例","mod":["营销系统"],"pain":["管理基础薄弱","战略方向模糊"],"sol":["认知升级·系统教育","流程标准化·手册","营销体系搭建"],"res":"餐车十几辆→超百辆覆盖全省，招商会超半数现场交款","t":"","quote":""},{"no":101,"c":"客户 #101","city":"吕梁","prov":"山西","ind":"珠宝零售","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["绩效考核流于形式","组织架构混乱","文化思想不统一"],"sol":["绩效考核落地","组织架构梳理","认知升级·系统教育"],"res":"绩效考核落地终结“工作断片”，权责清晰不推诿","t":"","quote":""},{"no":100,"c":"客户 #100","city":"","prov":"山西","ind":"无人机代理","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["目标管理缺失","绩效考核流于形式","部门协同差"],"sol":["战略规划·聚焦","目标管理闭环","流程标准化·手册","组织架构梳理"],"res":"从各自为战到协同作战，先共识再落地","t":"","quote":""},{"no":99,"c":"客户 #99","city":"","prov":"山西","ind":"化工贸易","year":2020,"type":"服务案例","mod":["组织系统","利润经营","财务系统"],"pain":["管理基础薄弱","团队积极性低","成本利润压力"],"sol":["薪酬体系设计","股权激励·分红","利润经营·独立核算","数据化·数字化"],"res":"合作5年，99%事务团队自处理，老板聚焦战略人才培养","t":"","quote":""},{"no":98,"c":"客户 #98","city":"太原","prov":"山西","ind":"智能仓储物流","year":2021,"type":"服务案例","mod":["组织系统","财务系统","利润经营"],"pain":["经验管理依赖","组织架构混乱","人才梯队断层","财务糊涂账"],"sol":["组织架构梳理","财务体系规范","利润经营·独立核算"],"res":"太原朔州业务自循环，老板聚焦苏州研发与海外布局","t":"","quote":""},{"no":97,"c":"客户 #97","city":"","prov":"山西","ind":"鞋类零售连锁","year":2019,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","管理基础薄弱","战略方向模糊"],"sol":["组织架构梳理","战略规划·聚焦","薪酬体系设计","流程标准化·手册"],"res":"10家店→300+家，年营业额1000万→近2亿，疫情中一年新开27家","t":"","quote":""},{"no":96,"c":"客户 #96","city":"沈阳","prov":"辽宁","ind":"PE塑料包装","year":2023,"type":"服务案例","mod":["财务系统","组织系统"],"pain":["财务糊涂账","绩效考核流于形式","人才梯队断层","战略方向模糊"],"sol":["财务体系规范","薪酬体系设计","绩效考核落地","战略规划·聚焦"],"res":"业绩+28%，ERP与财务流程匹配度90%，新增铁岭分厂","t":"","quote":""},{"no":95,"c":"客户 #95","city":"沈阳","prov":"辽宁","ind":"冷链物流","year":2024,"type":"服务案例","mod":["利润经营"],"pain":["经验管理依赖","财务糊涂账","老板亲力亲为"],"sol":["财务体系规范","经营分析会·盯盘","会议系统","目标管理闭环"],"res":"利润率+15%，仓库搬迁节约50-60万，全员看着账本做经营","t":"","quote":""},{"no":94,"c":"客户 #94","city":"抚顺","prov":"辽宁","ind":"骨汤调味料","year":2023,"type":"服务案例","mod":["利润经营"],"pain":["发展瓶颈/管理压力大","目标管理缺失","会议决策低效"],"sol":["利润经营·独立核算","目标管理闭环","会议系统"],"res":"收入+10%、利润+40%+，西南区域试点业绩+20%","t":"","quote":""},{"no":93,"c":"客户 #93","city":"","prov":"辽宁","ind":"包装设备制造","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","组织架构混乱","绩效考核流于形式"],"sol":["组织架构梳理","绩效考核落地"],"res":"销售额+15%逆势增长，业务员业绩100万→近200万","t":"","quote":""},{"no":92,"c":"客户 #92","city":"沈阳","prov":"辽宁","ind":"全屋定制家具","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["财务糊涂账","发展瓶颈/管理压力大","经验管理依赖"],"sol":["绩效考核落地","组织架构梳理","人才招聘培养"],"res":"100人→200人仍规范有序，从人治到法治","t":"","quote":""},{"no":91,"c":"客户 #91","city":"沈阳","prov":"辽宁","ind":"烘焙原料(贸易服务)","year":2024,"type":"服务案例","mod":["财务系统"],"pain":["财务糊涂账"],"sol":["财务体系规范","经营分析会·盯盘","数据化·数字化"],"res":"财务从后端记录者变前端赋能者，老板每月只看3张表","t":"","quote":""},{"no":90,"c":"客户 #90","city":"沈阳","prov":"辽宁","ind":"物业服务","year":2020,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","目标管理缺失"],"sol":["目标管理闭环","绩效考核落地","组织架构梳理"],"res":"每周例会解决80%问题，责任精准下沉，工具用4年仍有效","t":"","quote":""},{"no":89,"c":"客户 #89","city":"沈阳","prov":"辽宁","ind":"饮品供应链","year":2023,"type":"服务案例","mod":["利润经营"],"pain":["成本利润压力","团队积极性低","战略方向模糊"],"sol":["利润经营·独立核算","财务体系规范","战略规划·聚焦"],"res":"4个月焕发新生，3C团队机制，向解决方案服务商转型","t":"","quote":""},{"no":88,"c":"客户 #88","city":"沈阳","prov":"辽宁","ind":"电缆附件制造","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","财务糊涂账","回款现金流紧张"],"sol":["认知升级·系统教育","流程标准化·手册","激励机制设计"],"res":"2024销售额+70%，收回部分“死账”，应收账款同比下降","t":"","quote":""},{"no":87,"c":"客户 #87","city":"沈阳","prov":"辽宁","ind":"切割设备出口","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","绩效考核流于形式","薪酬体系缺失"],"sol":["战略规划·聚焦","目标管理闭环","激励机制设计","薪酬体系设计"],"res":"利润率+5-10%，员工主动挑战高目标，团队同频沟通","t":"","quote":""},{"no":86,"c":"客户 #86","city":"","prov":"辽宁","ind":"干粉砂浆","year":2023,"type":"服务案例","mod":["利润经营"],"pain":["文化思想不统一","财务糊涂账","营销乏力"],"sol":["利润经营·独立核算","目标管理闭环"],"res":"3个月业绩+32%、利润+48%，从低价卖货到价值营销","t":"","quote":""},{"no":85,"c":"客户 #85","city":"","prov":"辽宁","ind":"金属铸锻件/洗车机","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["目标管理缺失","薪酬体系缺失","部门协同差"],"sol":["目标管理闭环","绩效考核落地","组织架构梳理"],"res":"目标文件从1年→1周，供应链响应速度提升","t":"","quote":""},{"no":84,"c":"客户 #84","city":"","prov":"辽宁","ind":"人力资源服务","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["部门协同差","薪酬体系缺失","财务糊涂账"],"sol":["薪酬体系设计","数据化·数字化","经营分析会·盯盘"],"res":"Q1目标完成率114%，老板离开公司一两个月照常运转","t":"","quote":""},{"no":83,"c":"客户 #83","city":"","prov":"山东","ind":"乳品制造","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["绩效考核流于形式","管理基础薄弱","人才梯队断层"],"sol":["薪酬体系设计","组织架构梳理","人才招聘培养"],"res":"供应链超额完成目标，高管主动提出退还部分奖金","t":"","quote":""},{"no":82,"c":"客户 #82","city":"","prov":"山东","ind":"门窗制造","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","部门协同差","人才梯队断层"],"sol":["数据化·数字化","组织架构梳理","经营分析会·盯盘"],"res":"2024业绩+10%逆势增长，从“觉得”到“数据”","t":"","quote":""},{"no":81,"c":"客户 #81","city":"兰陵","prov":"山东","ind":"白酒制造","year":2023,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","薪酬体系缺失","战略方向模糊"],"sol":["组织架构梳理","薪酬体系设计","激励机制设计","绩效考核落地"],"res":"96%员工差异化涨薪，18个月消费降级中逆势增长","t":"","quote":""},{"no":80,"c":"客户 #80","city":"","prov":"山东","ind":"物流运输","year":2018,"type":"服务案例","mod":["组织系统"],"pain":["薪酬体系缺失","人才梯队断层","管理基础薄弱"],"sol":["薪酬体系设计","绩效考核落地","人才招聘培养","流程标准化·手册"],"res":"员工流失率降低，年底分钱不再头疼","t":"","quote":""},{"no":79,"c":"客户 #79","city":"","prov":"山东","ind":"花生果仁加工","year":2023,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["管理基础薄弱","人才梯队断层","团队积极性低"],"sol":["组织架构梳理","人才招聘培养","营销体系搭建","数据化·数字化","股权激励·分红"],"res":"2023-2024销售额+40%，2025Q1+30%，电商量利双增","t":"","quote":""},{"no":78,"c":"客户 #78","city":"青岛","prov":"山东","ind":"物流","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","目标管理缺失","绩效考核流于形式"],"sol":["目标管理闭环","绩效考核落地","流程标准化·手册"],"res":"从被动执行到主动优化，工具成为持续迭代的活系统","t":"","quote":""},{"no":77,"c":"客户 #77","city":"青岛","prov":"山东","ind":"印刷包装","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["营销乏力","老板亲力亲为","会议决策低效"],"sol":["会议系统","绩效考核落地","激励机制设计","营销体系搭建"],"res":"2023+13-14%，2024目标+15%，营销团队半年创20%新增业绩","t":"","quote":""},{"no":76,"c":"客户 #76","city":"青岛","prov":"山东","ind":"餐饮连锁","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","发展瓶颈/管理压力大","人才梯队断层"],"sol":["组织架构梳理","薪酬体系设计","企业文化·学习型组织"],"res":"26家店管理理顺，为扩张储备人才","t":"","quote":""},{"no":75,"c":"客户 #75","city":"威海","prov":"山东","ind":"钓具制造","year":2019,"type":"服务案例","mod":["财务系统","组织系统","股权激励"],"pain":["财务糊涂账","人才梯队断层","组织架构混乱"],"sol":["财务体系规范","组织架构梳理","股权激励·分红"],"res":"40人→200人，产值1600万→亿元，代工到自主品牌","t":"","quote":""},{"no":74,"c":"客户 #74","city":"威海","prov":"山东","ind":"数字化包装","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","成本利润压力"],"sol":["组织架构梳理","营销体系搭建"],"res":"2023业务量+30%，责任一目了然","t":"","quote":""},{"no":73,"c":"客户 #73","city":"威海","prov":"山东","ind":"路亚钓具制造","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["部门协同差","绩效考核流于形式","管理基础薄弱"],"sol":["组织架构梳理","激励机制设计","目标管理闭环","经营分析会·盯盘"],"res":"2021-2024业绩+140%，销售收入翻倍","t":"","quote":""},{"no":72,"c":"客户 #72","city":"冠县","prov":"山东","ind":"机械配件(电动车门锁)","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大","人才梯队断层","战略方向模糊"],"sol":["战略规划·聚焦","组织架构梳理","绩效考核落地","人才招聘培养"],"res":"客诉率-30~40%，生产完成率99%+，5个月显著变化","t":"","quote":""},{"no":71,"c":"客户 #71","city":"","prov":"山东","ind":"电力工程EPC","year":2022,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","人才梯队断层","团队积极性低"],"sol":["流程标准化·手册","目标管理闭环","薪酬体系设计"],"res":"2023营收+30%，从粗放式到目标导向型","t":"","quote":""},{"no":70,"c":"客户 #70","city":"泰安","prov":"山东","ind":"宠物食品代工","year":0,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大","成本利润压力","团队积极性低"],"sol":["组织架构梳理","薪酬体系设计","利润经营·独立核算","绩效考核落地","激励机制设计"],"res":"退货500万→几乎为零，降本效果突出","t":"","quote":""},{"no":69,"c":"客户 #69","city":"滨州","prov":"山东","ind":"家居代理整装","year":2019,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["组织架构混乱","薪酬体系缺失","财务糊涂账","成本利润压力"],"sol":["组织架构梳理","薪酬体系设计","财务体系规范","目标管理闭环","人才招聘培养"],"res":"业绩翻倍，库存资金释放，单店面积远超之前总店面","t":"","quote":""},{"no":68,"c":"客户 #68","city":"","prov":"山东","ind":"网约车平台","year":2022,"type":"服务案例","mod":["组织系统"],"pain":["目标管理缺失","文化思想不统一"],"sol":["组织架构梳理","薪酬体系设计","绩效考核落地","人才招聘培养"],"res":"2022-2024规模翻倍，150→400人，城市100+→200+","t":"","quote":""},{"no":67,"c":"客户 #67","city":"","prov":"山东","ind":"家具制造","year":2017,"type":"服务案例","mod":["组织系统","利润经营","财务系统"],"pain":["财务糊涂账","人才梯队断层","战略方向模糊"],"sol":["组织架构梳理","利润经营·独立核算","财务体系规范"],"res":"业绩相比2017增长5倍，5期组织+1期利润+1期财务","t":"","quote":""},{"no":66,"c":"客户 #66","city":"滨州","prov":"山东","ind":"金属加工","year":0,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["薪酬体系缺失","财务糊涂账"],"sol":["目标管理闭环","薪酬体系设计","人才招聘培养","财务体系规范"],"res":"2024业绩+38.3%，引进20+大学生（此前仅3名）","t":"","quote":""},{"no":65,"c":"客户 #65","city":"洛阳","prov":"河南","ind":"耐火材料","year":2018,"type":"服务案例","mod":["组织系统"],"pain":["成本利润压力","财务糊涂账","老板亲力亲为"],"sol":["财务体系规范","组织架构梳理","绩效考核落地"],"res":"从1个多亿干到7个亿，老板每周只看报表","t":"","quote":""},{"no":64,"c":"客户 #64","city":"焦作","prov":"河南","ind":"珠宝零售","year":2020,"type":"服务案例","mod":["利润经营"],"pain":["营销乏力","经验管理依赖","战略方向模糊"],"sol":["利润经营·独立核算","目标管理闭环"],"res":"濒临关店门店半年扭亏为盈创十年新高","t":"","quote":""},{"no":63,"c":"客户 #63","city":"","prov":"","ind":"工程/军工检测","year":0,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","目标管理缺失"],"sol":["薪酬体系设计","战略规划·聚焦","企业文化·学习型组织"],"res":"新公司成立业绩突破5000万","t":"","quote":""},{"no":62,"c":"客户 #62","city":"","prov":"","ind":"多板块制造施工","year":2021,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["管理基础薄弱","薪酬体系缺失","成本利润压力"],"sol":["薪酬体系设计","绩效考核落地","利润经营·独立核算"],"res":"一期扭亏为盈，团队从被动执行到主动经营","t":"","quote":""},{"no":61,"c":"客户 #61","city":"洛阳","prov":"河南","ind":"石化工程设计","year":0,"type":"服务案例","mod":["组织系统","股权激励","文化系统","财务系统","营销系统"],"pain":["人才梯队断层","组织架构混乱","营销乏力"],"sol":["绩效考核落地","股权激励·分红","企业文化·学习型组织","财务体系规范","营销体系搭建"],"res":"人数没增业绩每年+20%，5期合作，行业寒冬中稳步增长","t":"","quote":""},{"no":60,"c":"客户 #60","city":"","prov":"","ind":"岩土工程材料","year":0,"type":"服务案例","mod":["组织系统","人才系统"],"pain":["管理基础薄弱","人才梯队断层","经验管理依赖"],"sol":["薪酬体系设计","人才招聘培养","利润经营·独立核算"],"res":"研发团队目标感节奏感进步，团队敢挑战更高目标","t":"","quote":""},{"no":59,"c":"客户 #59","city":"","prov":"","ind":"空分设备制造","year":0,"type":"服务案例","mod":["组织系统"],"pain":["二代接班传承","人才梯队断层","经验管理依赖"],"sol":["目标管理闭环","会议系统","流程标准化·手册","接班人培养"],"res":"浩总从不会做总经理到掌握管理抓手，顺利接班","t":"","quote":""},{"no":58,"c":"客户 #58","city":"温县","prov":"河南","ind":"咸味香精调味料","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层","薪酬体系缺失"],"sol":["利润经营·独立核算","薪酬体系设计","股权激励·分红","人才招聘培养","战略规划·聚焦"],"res":"2024员工-20%产量+3%利润+2.7%，销售自定目标25%超公司10%","t":"","quote":""},{"no":57,"c":"客户 #57","city":"","prov":"","ind":"制桶/金属包装","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","目标管理缺失","老板亲力亲为"],"sol":["目标管理闭环","组织架构梳理","绩效考核落地","薪酬体系设计","营销体系搭建"],"res":"3000多万→集团破1亿，拓展兰州重庆分公司","t":"","quote":""},{"no":56,"c":"客户 #56","city":"","prov":"河南","ind":"涂塑钢管","year":2019,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["经验管理依赖","财务糊涂账"],"sol":["薪酬体系设计","营销体系搭建","财务体系规范"],"res":"从5-6人做到河南品类第一，财务清除外账雷","t":"","quote":""},{"no":55,"c":"客户 #55","city":"","prov":"","ind":"钢材贸易","year":2023,"type":"服务案例","mod":["利润经营","财务系统"],"pain":["发展瓶颈/管理压力大","目标管理缺失","财务糊涂账"],"sol":["利润经营·独立核算","会议系统","人才招聘培养","企业文化·学习型组织","财务体系规范"],"res":"管理流程简化，经营风险有效管控","t":"","quote":""},{"no":54,"c":"客户 #54","city":"","prov":"","ind":"教育服务","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大","管理基础薄弱"],"sol":["目标管理闭环","人才招聘培养","绩效考核落地"],"res":"业绩+70%，新人10天上岗，摆脱老员工依赖","t":"","quote":""},{"no":53,"c":"客户 #53","city":"","prov":"","ind":"包装服务","year":0,"type":"服务案例","mod":["利润经营"],"pain":["团队积极性低","人才能力不足"],"sol":["利润经营·独立核算","流程标准化·手册","认知升级·系统教育"],"res":"老师入企第3个月业绩同比+30%","t":"","quote":""},{"no":52,"c":"客户 #52","city":"","prov":"","ind":"教育培训","year":0,"type":"服务案例","mod":["组织系统"],"pain":["薪酬体系缺失","经验管理依赖"],"sol":["认知升级·系统教育","经营分析会·盯盘"],"res":"业绩增长一倍多，全员进入战时状态","t":"","quote":""},{"no":51,"c":"客户 #51","city":"","prov":"","ind":"服装制造","year":2013,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["管理基础薄弱","团队积极性低"],"sol":["人才招聘培养","数据化·数字化"],"res":"2023+12%、2024+25%，上下同欲","t":"","quote":""},{"no":50,"c":"客户 #50","city":"","prov":"","ind":"电力检修","year":2017,"type":"服务案例","mod":["利润经营"],"pain":["薪酬体系缺失","财务糊涂账"],"sol":["利润经营·独立核算","财务体系规范","薪酬体系设计"],"res":"人均产值翻倍，年产值几千万→2亿，疫情期间仍增长","t":"","quote":""},{"no":49,"c":"客户 #49","city":"郑州","prov":"河南","ind":"烘焙/连锁门店","year":0,"type":"服务案例","mod":["财务系统"],"pain":["财务糊涂账","成本利润压力"],"sol":["财务体系规范"],"res":"3家店→65家店，成本减少10%多","t":"","quote":""},{"no":48,"c":"客户 #48","city":"","prov":"","ind":"商贸","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["二代接班传承","发展瓶颈/管理压力大","成本利润压力"],"sol":["组织架构梳理","薪酬体系设计","团队协同·责任下沉"],"res":"2023逆势+20%，库存盘点准确率99.5%，董事长彻底解放","t":"","quote":""},{"no":47,"c":"客户 #47","city":"","prov":"","ind":"制造/商贸","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱"],"sol":["认知升级·系统教育","目标管理闭环","绩效考核落地","薪酬体系设计"],"res":"招聘效率质量提升，管理流程规范","t":"","quote":""},{"no":46,"c":"客户 #46","city":"","prov":"","ind":"混凝土","year":0,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["组织架构混乱","人才梯队断层","营销乏力"],"sol":["组织架构梳理","人才招聘培养","营销体系搭建","绩效考核落地","财务体系规范"],"res":"柯总提前一年顺利接班，董事长常年旅游","t":"","quote":""},{"no":45,"c":"客户 #45","city":"","prov":"","ind":"磨料磨具(砂布)","year":2018,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大","组织架构混乱"],"sol":["绩效考核落地","激励机制设计","流程标准化·手册","接班人培养"],"res":"2019+35%、2023+40%，二代顺利接班","t":"","quote":""},{"no":44,"c":"客户 #44","city":"","prov":"","ind":"食品(肉类冻品)","year":0,"type":"服务案例","mod":["组织系统","股权激励"],"pain":["薪酬体系缺失","绩效考核流于形式","成本利润压力"],"sol":["股权激励·分红","人才招聘培养","组织架构梳理","财务体系规范"],"res":"管理、战略、人才全面提升，为发展奠定基础","t":"","quote":""},{"no":43,"c":"客户 #43","city":"","prov":"","ind":"化工","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["部门协同差","目标管理缺失","管理基础薄弱"],"sol":["目标管理闭环","组织架构梳理","绩效考核落地","薪酬体系设计"],"res":"2024业绩+30%，销冠从抵触到主动签目标责任书","t":"","quote":""},{"no":42,"c":"客户 #42","city":"涿州","prov":"河北","ind":"","year":2022,"type":"服务案例","mod":[],"pain":[],"sol":[],"res":"源文档内容不完整","t":"","quote":""},{"no":41,"c":"客户 #41","city":"","prov":"","ind":"半导体(设计封测)","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱"],"sol":["组织架构梳理","人才招聘培养","薪酬体系设计"],"res":"招人留存率大幅提高，系统框架搭起","t":"","quote":""},{"no":40,"c":"客户 #40","city":"","prov":"","ind":"医疗服务(护理)","year":2021,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","组织架构混乱"],"sol":["目标管理闭环","经营分析会·盯盘","营销体系搭建","人才招聘培养"],"res":"项目1→5-6个，员工50→400，3年销售额翻倍","t":"","quote":""},{"no":39,"c":"客户 #39","city":"绍兴","prov":"浙江","ind":"精密研磨抛光材料","year":2022,"type":"服务案例","mod":["组织系统"],"pain":["变革阻力大","人才能力不足"],"sol":["目标管理闭环","绩效考核落地","人才招聘培养","流程标准化·手册"],"res":"三年平均增长超50%，通过国际供应商审核","t":"","quote":""},{"no":38,"c":"客户 #38","city":"","prov":"","ind":"模具注塑","year":0,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层","组织架构混乱"],"sol":["数据化·数字化","组织架构梳理"],"res":"业绩逆势+32.6%","t":"","quote":""},{"no":37,"c":"客户 #37","city":"","prov":"","ind":"混凝土","year":0,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大","团队积极性低"],"sol":["组织架构梳理","薪酬体系设计","绩效考核落地"],"res":"原团队业绩+20%多","t":"","quote":""},{"no":36,"c":"客户 #36","city":"","prov":"","ind":"烘焙","year":0,"type":"服务案例","mod":["组织系统"],"pain":["老板亲力亲为","团队积极性低"],"sol":["利润经营·独立核算","目标管理闭环"],"res":"第一期完成，主动组织同行交流帮长松推广","t":"","quote":""},{"no":35,"c":"客户 #35","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["老板亲力亲为","会议决策低效","目标管理缺失"],"sol":["目标管理闭环","经营分析会·盯盘","团队协同·责任下沉"],"res":"行业停滞或倒退仍保持增长，拓展无锡公司","t":"","quote":""},{"no":34,"c":"客户 #34","city":"广元","prov":"四川","ind":"","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层","薪酬体系缺失","团队积极性低"],"sol":["组织架构梳理","薪酬体系设计"],"res":"组织脉络清晰，管理专业度提升，众神归位","t":"","quote":""},{"no":33,"c":"客户 #33","city":"成都","prov":"四川","ind":"珠宝零售","year":2020,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["股权激励·分红","组织架构梳理","战略规划·聚焦"],"res":"业绩保持17%左右上升趋势，门店复制能力提升","t":"","quote":""},{"no":32,"c":"客户 #32","city":"","prov":"","ind":"","year":2019,"type":"服务案例","mod":["组织系统"],"pain":["变革阻力大","组织架构混乱","营销乏力"],"sol":["组织架构梳理","绩效考核落地","薪酬体系设计","目标管理闭环","股权激励·分红"],"res":"仅用3年做到内循环，工具沿用至今","t":"","quote":""},{"no":31,"c":"客户 #31","city":"成都","prov":"四川","ind":"餐饮供应链(全生态)","year":0,"type":"服务案例","mod":["组织系统"],"pain":["薪酬体系缺失","管理基础薄弱","绩效考核流于形式"],"sol":["薪酬体系设计","组织架构梳理","绩效考核落地"],"res":"3年沿用至今，企业自身更规范有序","t":"","quote":""},{"no":30,"c":"客户 #30","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["经验管理依赖","绩效考核流于形式","会议决策低效"],"sol":["人才招聘培养","组织架构梳理","薪酬体系设计","绩效考核落地","经营分析会·盯盘"],"res":"一年培养出2个总经理（计划10个）","t":"","quote":""},{"no":29,"c":"客户 #29","city":"","prov":"","ind":"铝制品装修材料","year":0,"type":"服务案例","mod":["组织系统"],"pain":["变革阻力大","人才梯队断层"],"sol":["流程标准化·手册","经营分析会·盯盘","绩效考核落地"],"res":"业绩略低但利润更多，日复盘全员执行","t":"","quote":""},{"no":28,"c":"客户 #28","city":"南宁","prov":"广西","ind":"零售连锁","year":2013,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","人才梯队断层"],"sol":["组织架构梳理","人才招聘培养","薪酬体系设计"],"res":"20平门店5人400万→行业前十1.6亿，离场管理","t":"","quote":""},{"no":27,"c":"客户 #27","city":"","prov":"广西","ind":"女装零售连锁","year":2020,"type":"服务案例","mod":["利润经营","财务系统","组织系统"],"pain":["部门协同差","经验管理依赖"],"sol":["利润经营·独立核算","财务体系规范","组织架构梳理","战略规划·聚焦"],"res":"4个月5000万→8000万，2023年新开100+门店","t":"","quote":""},{"no":26,"c":"客户 #26","city":"","prov":"","ind":"商贸/供应链","year":0,"type":"服务案例","mod":["组织系统"],"pain":["成本利润压力","绩效考核流于形式"],"sol":["战略规划·聚焦","团队协同·责任下沉"],"res":"每周六各部门自发开会复盘","t":"","quote":""},{"no":25,"c":"客户 #25","city":"","prov":"广西","ind":"","year":2013,"type":"服务案例","mod":["组织系统"],"pain":["文化思想不统一"],"sol":["认知升级·系统教育"],"res":"同行150名→前3，营业额2.3亿，团队300+人","t":"","quote":""},{"no":24,"c":"客户 #24","city":"南宁","prov":"广西","ind":"餐饮连锁(螺蛳粉)","year":2017,"type":"服务案例","mod":["组织系统"],"pain":["文化思想不统一","管理基础薄弱"],"sol":["战略规划·聚焦"],"res":"防城港→南宁总部，70+门店，从游击队变正规军","t":"","quote":""},{"no":23,"c":"客户 #23","city":"","prov":"","ind":"","year":2022,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层","目标管理缺失"],"sol":["目标管理闭环","经营分析会·盯盘"],"res":"业绩+20%左右，团队被唤醒","t":"","quote":""},{"no":22,"c":"客户 #22","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["认知升级·系统教育"],"res":"3.5亿→6.5亿，库存降低人均效率提高","t":"","quote":""},{"no":21,"c":"客户 #21","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["薪酬体系缺失","老板亲力亲为"],"sol":["利润经营·独立核算","股权激励·分红","薪酬体系设计"],"res":"3个月新增10个新客户，团队自驱力激活","t":"","quote":""},{"no":20,"c":"客户 #20","city":"东莞","prov":"广东","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["部门协同差"],"sol":["组织架构梳理","人才招聘培养","激励机制设计"],"res":"3-4亿→7-8亿，利润翻番，老板每周只开两次会","t":"","quote":""},{"no":19,"c":"客户 #19","city":"","prov":"","ind":"","year":2017,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱"],"sol":["目标管理闭环","绩效考核落地","薪酬体系设计"],"res":"4.5亿→6.3亿，研发团队主动加班","t":"","quote":""},{"no":18,"c":"客户 #18","city":"","prov":"","ind":"制造(新厂)","year":2023,"type":"服务案例","mod":["组织系统","财务系统","股权激励"],"pain":["管理基础薄弱"],"sol":["薪酬体系设计","企业文化·学习型组织","财务体系规范","股权激励·分红"],"res":"120人团队，已接单3亿，开始挑客户","t":"","quote":""},{"no":17,"c":"客户 #17","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["成本利润压力","人才梯队断层"],"sol":["组织架构梳理","激励机制设计","人才招聘培养"],"res":"保底1.5亿完成2.7亿同比翻番，新增107人","t":"","quote":""},{"no":16,"c":"客户 #16","city":"","prov":"","ind":"设备制造","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱"],"sol":["组织架构梳理","人才招聘培养"],"res":"3位项目经理，研发团队状态积极","t":"","quote":""},{"no":15,"c":"客户 #15","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["营销乏力"],"sol":["营销体系搭建","激励机制设计"],"res":"商机明显增长，营销人数2-3倍","t":"","quote":""},{"no":14,"c":"客户 #14","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["成本利润压力"],"sol":["目标管理闭环","股权激励·分红"],"res":"成本管控超30%，合伙人都拿到更多收益","t":"","quote":""},{"no":13,"c":"客户 #13","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["绩效考核流于形式","人才梯队断层"],"sol":["薪酬体系设计","人才招聘培养"],"res":"2023业绩明显增长，唯一持续复购的咨询公司","t":"","quote":""},{"no":12,"c":"客户 #12","city":"","prov":"","ind":"连锁门店","year":0,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["组织架构梳理","认知升级·系统教育"],"res":"60家→140家，13年合作每年复训2-3次","t":"","quote":""},{"no":11,"c":"客户 #11","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["组织架构梳理","团队协同·责任下沉","人才招聘培养"],"res":"2000万→5000万，30人→90人","t":"","quote":""},{"no":10,"c":"客户 #10","city":"长沙","prov":"湖南","ind":"3C零售(华为)","year":0,"type":"服务案例","mod":["组织系统"],"pain":["二代接班传承","人才梯队断层"],"sol":["薪酬体系设计","认知升级·系统教育"],"res":"一个季度团队从一盘散沙到团结，一年游刃有余","t":"","quote":""},{"no":9,"c":"客户 #9","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层"],"sol":["认知升级·系统教育"],"res":"经营意识和思维发生很大改变","t":"","quote":""},{"no":8,"c":"客户 #8","city":"","prov":"","ind":"","year":2017,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["财务体系规范","股权激励·分红","目标管理闭环"],"res":"40人→1300人，业绩近6亿，5年陪伴","t":"","quote":""},{"no":7,"c":"客户 #7","city":"","prov":"","ind":"制造","year":0,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱"],"sol":["组织架构梳理","薪酬体系设计"],"res":"新员工留存率90%+，绩效试运行","t":"","quote":""},{"no":6,"c":"客户 #6","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱"],"sol":["目标管理闭环","组织架构梳理","薪酬体系设计"],"res":"工具切实运用并产生效果","t":"","quote":""},{"no":5,"c":"客户 #5","city":"","prov":"","ind":"科技(产业化)","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱"],"sol":["战略规划·聚焦"],"res":"20多年见过最专业的咨询，明年继续合作","t":"","quote":""},{"no":4,"c":"客户 #4","city":"","prov":"","ind":"","year":0,"type":"走访案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["认知升级·系统教育"],"res":"徐总：省3年摸索时间","t":"","quote":""},{"no":3,"c":"客户 #3","city":"温州","prov":"浙江","ind":"制造","year":0,"type":"走访案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["认知升级·系统教育"],"res":"相互推荐选择长松","t":"","quote":""},{"no":2,"c":"客户 #2","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["人才梯队断层"],"sol":["认知升级·系统教育"],"res":"业绩×3、利润×10-20，员工带着老板跑","t":"","quote":""},{"no":1,"c":"客户 #1","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统"],"pain":["发展瓶颈/管理压力大"],"sol":["认知升级·系统教育"],"res":"管理解放70%，轻松多了","t":"","quote":""},{"no":155,"c":"客户 #155","city":"台州","prov":"浙江","ind":"医疗服务(口腔)","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["老板亲力亲为","组织架构混乱","薪酬体系缺失","人才能力不足"],"sol":["组织架构梳理","薪酬体系设计","绩效考核落地","人才招聘培养"],"res":"创始人从大管家转经营者，HR岗补齐、绩效薪酬落地，团队优胜劣汰战斗力提升","t":"","quote":""},{"no":156,"c":"客户 #156","city":"","prov":"浙江","ind":"医药制造","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["管理基础薄弱","薪酬体系缺失","成本利润压力"],"sol":["目标管理闭环","经营分析会·盯盘","薪酬体系设计","绩效考核落地"],"res":"粗放年度奖金改按月精细考核，销售提成落地，一期未结束即复购二期并规划两年成长","t":"","quote":""},{"no":157,"c":"客户 #157","city":"宁波","prov":"浙江","ind":"医疗器械(眼科设备)","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["绩效考核流于形式","部门协同差","目标管理缺失"],"sol":["组织架构梳理","目标管理闭环","薪酬体系设计","绩效考核落地","经营分析会·盯盘","人才招聘培养"],"res":"公司统筹的指标分解体系+矩阵式架构，上半年业绩约+30%，干部主动挑战目标","t":"","quote":""},{"no":158,"c":"客户 #158","city":"宁波","prov":"浙江","ind":"数控机床制造","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效","财务系统"],"pain":["战略方向模糊","经验管理依赖","绩效考核流于形式"],"sol":["战略规划·聚焦","组织架构梳理","薪酬体系设计","财务体系规范","目标管理闭环"],"res":"7条战略目标统一认知，销售V型反转(2026已完成超半数目标)，二代新媒体销售近2000万","t":"","quote":""},{"no":159,"c":"客户 #159","city":"","prov":"","ind":"精密制造(齿轮传动)","year":0,"type":"服务案例","mod":["组织系统"],"pain":["团队积极性低","人才能力不足","营销乏力"],"sol":["组织架构梳理","目标管理闭环"],"res":"组织架构与目标体系已落地，绩效考核与薪酬挂钩留待二期打通","t":"","quote":""},{"no":160,"c":"客户 #160","city":"","prov":"江苏","ind":"化工新材料","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["管理基础薄弱","绩效考核流于形式","部门协同差"],"sol":["绩效考核落地","组织架构梳理"],"res":"集团化管控平稳过渡，对事不对人氛围形成，业绩同比+20%多","t":"","quote":""},{"no":161,"c":"客户 #161","city":"泰州","prov":"江苏","ind":"木业制造","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","管理基础薄弱","部门协同差"],"sol":["组织架构梳理","目标管理闭环","经营分析会·盯盘","绩效考核落地"],"res":"150多名管理人员责任边界明确，客户满意度提升，冲击15亿营收天花板","t":"","quote":""},{"no":162,"c":"客户 #162","city":"","prov":"江苏","ind":"桥梁设备制造","year":2023,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","老板亲力亲为","人才梯队断层"],"sol":["薪酬体系设计","经营分析会·盯盘","绩效考核落地","数据化·数字化"],"res":"年销售额3500万→1.7亿(2025)，2026年7月已完成1个多亿，老板半甩手","t":"","quote":""},{"no":163,"c":"客户 #163","city":"扬州","prov":"江苏","ind":"非金属矿深加工","year":0,"type":"服务案例","mod":["组织系统","营销系统"],"pain":["部门协同差","经验管理依赖","团队积极性低"],"sol":["组织架构梳理","人才招聘培养","营销体系搭建","绩效考核落地"],"res":"打破部门墙形成合力，一把手转向结果导向，营销团队从0到1规范化(CRM+销售漏斗)","t":"","quote":""},{"no":164,"c":"客户 #164","city":"昆山","prov":"江苏","ind":"电子材料","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["部门协同差","管理基础薄弱","二代接班传承"],"sol":["组织架构梳理","目标管理闭环","薪酬体系设计","会议系统"],"res":"台湾管理中心+芜湖制造+昆山营销矩阵成型，多地自主运转，两代管理者共识达成","t":"","quote":""},{"no":165,"c":"客户 #165","city":"","prov":"浙江","ind":"数码印刷材料","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","二代接班传承","绩效考核流于形式"],"sol":["组织架构梳理","绩效考核落地","薪酬体系设计","目标管理闭环"],"res":"销售客服拆分、生产中心整合，考核挂钩工资后团队主动关注核心指标，二代平稳接班","t":"","quote":""},{"no":166,"c":"客户 #166","city":"","prov":"浙江","ind":"精密制造(半导体设备/机床/刀具)","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["经验管理依赖","部门协同差","组织架构混乱"],"sol":["数据化·数字化","绩效考核落地","组织架构梳理","薪酬体系设计"],"res":"OKR+绩效落地统一交付口径，今年业绩同比+38.89%，从人治转向法治","t":"","quote":""},{"no":167,"c":"客户 #167","city":"","prov":"浙江","ind":"纺织","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["管理基础薄弱","经验管理依赖","部门协同差","团队积极性低"],"sol":["目标管理闭环","激励机制设计","营销体系搭建","绩效考核落地","人才招聘培养","财务体系规范"],"res":"吵架会变务实复盘会，阶梯提成激活销售狼性，财务内部化，管理表上墙并转介绍客户","t":"","quote":""},{"no":168,"c":"客户 #168","city":"义乌","prov":"浙江","ind":"工艺礼品制造","year":0,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","财务糊涂账","老板亲力亲为"],"sol":["组织架构梳理","人才招聘培养","流程标准化·手册","数据化·数字化","经营分析会·盯盘","薪酬体系设计"],"res":"库存准确率提升至97%，老板放心外出数日，从因人设岗到因岗找人","t":"","quote":""},{"no":169,"c":"客户 #169","city":"义乌","prov":"浙江","ind":"玩具贸易","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","经验管理依赖","团队积极性低"],"sol":["薪酬体系设计","数据化·数字化","组织架构梳理","经营分析会·盯盘"],"res":"提成改按毛利计算后业务员主动控成本，赛马机制自然淘汰换血，老板告别逐单审价","t":"","quote":""},{"no":170,"c":"客户 #170","city":"上海","prov":"上海","ind":"新材料","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["管理基础薄弱","经验管理依赖","成本利润压力"],"sol":["流程标准化·手册","绩效考核落地","薪酬体系设计","人才招聘培养","利润经营·独立核算"],"res":"10个月：销售额+27-28%、净利润+48%、投入产出比60%→93%，清理隐性成本蛀虫","t":"","quote":""},{"no":171,"c":"客户 #171","city":"上海","prov":"上海","ind":"电力变压器","year":2025,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["团队积极性低","部门协同差","老板亲力亲为"],"sol":["薪酬体系设计","组织架构梳理","团队协同·责任下沉"],"res":"老板从6点盯业务到8点到岗，铁三角联动，砍掉两个不盈利部门聚焦主业","t":"","quote":""},{"no":172,"c":"客户 #172","city":"上海","prov":"上海","ind":"环保设备","year":0,"type":"服务案例","mod":["组织系统"],"pain":["部门协同差","经验管理依赖"],"sol":["流程标准化·手册","绩效考核落地","人才招聘培养","薪酬体系设计","经营分析会·盯盘"],"res":"主经营流程细化180多条，2026年1-7月业绩+13%、回款率+20%，行业下行跑赢同行","t":"","quote":""},{"no":173,"c":"客户 #173","city":"重庆","prov":"重庆","ind":"电气设备制造","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["文化思想不统一","组织架构混乱","管理基础薄弱"],"sol":["企业文化·学习型组织","组织架构梳理","数据化·数字化"],"res":"先统一思想降变革阻力：多总监并行整合为四大中心，财务转型为决策支撑","t":"","quote":""},{"no":174,"c":"客户 #174","city":"","prov":"","ind":"餐饮连锁","year":0,"type":"服务案例","mod":["组织系统","战略咨询"],"pain":["战略方向模糊","组织架构混乱","管理基础薄弱"],"sol":["战略规划·聚焦","企业文化·学习型组织","组织架构梳理","流程标准化·手册"],"res":"选址测算模型+19节点创利流程落地，众神归位+战委会决议，从做生意到做企业","t":"","quote":""},{"no":175,"c":"客户 #175","city":"重庆","prov":"重庆","ind":"非标自动化集成","year":2024,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","经验管理依赖"],"sol":["绩效考核落地","人才招聘培养","目标管理闭环","经营分析会·盯盘","组织架构梳理"],"res":"点状工具串成闭环：绩效面谈/人才盘点/经营分析会常态化，老板系统思维提升","t":"","quote":""},{"no":176,"c":"客户 #176","city":"","prov":"四川","ind":"食品制造","year":0,"type":"服务案例","mod":["组织系统"],"pain":["组织架构混乱","管理基础薄弱","部门协同差"],"sol":["目标管理闭环","绩效考核落地","人才招聘培养","经营分析会·盯盘"],"res":"2026上半年目标完成率110-130%、同比+60%，生产满负荷新工厂年底投产","t":"","quote":""},{"no":177,"c":"客户 #177","city":"","prov":"湖南","ind":"餐饮供应链","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","经验管理依赖"],"sol":["流程标准化·手册","经营分析会·盯盘","数据化·数字化"],"res":"流程制度补全、日/周追踪盯盘系统化，2025财年业绩达成明显改善","t":"","quote":""},{"no":178,"c":"客户 #178","city":"长沙","prov":"湖南","ind":"IT服务(网络安全/云计算)","year":2025,"type":"服务案例","mod":["组织系统","财务系统","营销系统"],"pain":["人才能力不足","部门协同差","管理基础薄弱"],"sol":["绩效考核落地","财务体系规范","营销体系搭建","数据化·数字化"],"res":"全员OKR一年12轮迭代，业财融合，需求钻石模型固化进CRM，周报15分钟→3分钟","t":"","quote":""},{"no":179,"c":"客户 #179","city":"","prov":"","ind":"装备制造(轨道/新能源)","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["管理基础薄弱","薪酬体系缺失","组织架构混乱"],"sol":["组织架构梳理","薪酬体系设计","绩效考核落地","人才招聘培养"],"res":"破除国企惯性：四大中心重构、按岗位价值定薪、绩效差距拉大，认知觉醒活力激活","t":"","quote":""},{"no":180,"c":"客户 #180","city":"","prov":"广东","ind":"精密传动部件","year":2013,"type":"服务案例","mod":["组织系统","财务系统"],"pain":["成本利润压力","薪酬体系缺失","经验管理依赖"],"sol":["财务体系规范","薪酬体系设计","经营分析会·盯盘","目标管理闭环"],"res":"从业绩导向转利润导向，今年业绩+50%、年底利润有望翻倍，13年未换服务商","t":"","quote":""},{"no":181,"c":"客户 #181","city":"","prov":"广东","ind":"零担物流","year":0,"type":"服务案例","mod":["组织系统"],"pain":["部门协同差","人才能力不足","管理基础薄弱"],"sol":["流程标准化·手册","团队协同·责任下沉","目标管理闭环","经营分析会·盯盘"],"res":"组织系统1.0手册落地，中台打破部门墙，业绩同比+3.5%，老板元老逐步解放","t":"","quote":""},{"no":182,"c":"客户 #182","city":"深圳","prov":"广东","ind":"精密模具注塑","year":2021,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["管理基础薄弱","组织架构混乱"],"sol":["利润经营·独立核算","组织架构梳理"],"res":"一期小组织裂变营收千万级→数亿级(3倍)，二期重构销售体系与分配机制","t":"","quote":""},{"no":183,"c":"客户 #183","city":"深圳","prov":"广东","ind":"新能源(逆变器/储能)","year":2025,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","管理基础薄弱","经验管理依赖"],"sol":["薪酬体系设计","绩效考核落地","目标管理闭环","人才招聘培养","经营分析会·盯盘"],"res":"业绩+50%高质量增长，薪酬打破新老倒挂，目标责任书构建能上能下文化","t":"","quote":""},{"no":184,"c":"客户 #184","city":"深圳","prov":"广东","ind":"家居工艺品","year":0,"type":"服务案例","mod":["组织系统"],"pain":["管理基础薄弱","经验管理依赖","组织架构混乱"],"sol":["目标管理闭环","绩效考核落地","人才招聘培养","数据化·数字化","经营分析会·盯盘"],"res":"2026年1-5月销售额+30-40%、毛利+30%，2000+SKU高效协同，经营会变决策复盘会","t":"","quote":""},{"no":185,"c":"客户 #185","city":"佛山","prov":"广东","ind":"机械制造","year":0,"type":"服务案例","mod":["组织系统","营销系统"],"pain":["薪酬体系缺失","经验管理依赖","团队积极性低"],"sol":["薪酬体系设计","人才招聘培养","营销体系搭建"],"res":"薪酬→绩效→晋升拉通消除薪资倒挂，价值需求测评降低招聘试错，组织能裂变","t":"","quote":""},{"no":186,"c":"客户 #186","city":"深圳","prov":"广东","ind":"智能硬件(热成像/夜视仪)","year":0,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["成本利润压力","经验管理依赖","团队积极性低"],"sol":["利润经营·独立核算","目标管理闭环"],"res":"未大规模扩编年度营收+40%，独立核算+硬账清单KPI把老板压力下沉为团队目标","t":"","quote":""},{"no":187,"c":"客户 #187","city":"深圳","prov":"广东","ind":"精密机械(CNC/压铸注塑)","year":2023,"type":"服务案例","mod":["组织系统"],"pain":["老板亲力亲为","管理基础薄弱","经验管理依赖"],"sol":["组织架构梳理","绩效考核落地","目标管理闭环"],"res":"去年营收+30%、今年+50%提前达成，90%问题部门自主解决，老板日均电话→每周1次","t":"","quote":""},{"no":188,"c":"客户 #188","city":"广州","prov":"广东","ind":"工业品集采","year":2025,"type":"服务案例","mod":["组织系统","人才系统"],"pain":["管理基础薄弱","人才梯队断层"],"sol":["绩效考核落地","人才招聘培养","组织架构梳理"],"res":"落地IPD+绩效+人才与利益分配机制，关键人才合作与资源整合难题解决","t":"","quote":""},{"no":189,"c":"客户 #189","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["团队积极性低","薪酬体系缺失","组织架构混乱"],"sol":["薪酬体系设计","绩效考核落地","激励机制设计"],"res":"2025业绩翻倍(人数未增)，2026目标2.5倍(人数仅+30%)，团队从沉默应付到主动复盘","t":"","quote":""},{"no":190,"c":"客户 #190","city":"佛山","prov":"广东","ind":"医疗器械(康复辅具)","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["薪酬体系缺失","目标管理缺失","经验管理依赖"],"sol":["薪酬体系设计","经营分析会·盯盘","目标管理闭环","组织架构梳理"],"res":"五级薪酬理顺升职加薪通道，截至5月完成全年目标近一半，问题闭环内耗减少","t":"","quote":""},{"no":191,"c":"客户 #191","city":"中山","prov":"广东","ind":"数字印刷","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["组织架构混乱","绩效考核流于形式","管理基础薄弱"],"sol":["组织架构梳理","绩效考核落地","人才招聘培养"],"res":"30多人人治→架构完整60多人，绩效从0到1落地，老板认知迭代","t":"","quote":""},{"no":192,"c":"客户 #192","city":"佛山","prov":"广东","ind":"门窗制造","year":2024,"type":"服务案例","mod":["组织系统","目标管理"],"pain":["管理基础薄弱","经验管理依赖"],"sol":["绩效考核落地","经营分析会·盯盘","企业文化·学习型组织"],"res":"2011年课堂启蒙十年免费陪伴，2024年正式签约；PK文化/盯盘原样用于自己团队","t":"","quote":""},{"no":193,"c":"客户 #193","city":"衡水","prov":"河北","ind":"新材料(锂电耗材)","year":2023,"type":"服务案例","mod":["组织系统","薪酬绩效","财务系统"],"pain":["绩效考核流于形式","薪酬体系缺失","成本利润压力"],"sol":["绩效考核落地","薪酬体系设计","财务体系规范","组织架构梳理"],"res":"2023年体系沿用至今持续落地，因岗设薪人人信服，核算账+ERP成本每日精准可查","t":"","quote":""},{"no":194,"c":"客户 #194","city":"北京","prov":"北京","ind":"安保服务","year":0,"type":"服务案例","mod":["组织系统","利润经营"],"pain":["管理基础薄弱","部门协同差","经验管理依赖"],"sol":["利润经营·独立核算","组织架构梳理","人才招聘培养","目标管理闭环","数据化·数字化"],"res":"小组织核算让员工看清成本重建信任，每分公司专属作战地图，从被动接任务到主动打胜仗","t":"","quote":""},{"no":195,"c":"客户 #195","city":"","prov":"","ind":"","year":0,"type":"服务案例","mod":["组织系统","薪酬绩效"],"pain":["目标管理缺失","人才梯队断层","团队积极性低"],"sol":["目标管理闭环","人才招聘培养","激励机制设计","经营分析会·盯盘"],"res":"目标责任书+绩效+分红闭环，晋升细分三级阶梯，滞销品增量提成翻倍成新增长点(评分9.5/10)","t":"","quote":""}];
+</script>
+<script>
+/* ============================================================
+   长松咨询 · 案例大数据系统 — 知识库种子数据
+   每个条目：一类常见问题 → 长松标准解法 → 落地动作/工具/话术
+   全部可在系统内编辑、增删，也可整库导入你的自有知识库
+   ============================================================ */
+var SEED_KB = [
+  {
+    id: "KB01",
+    problem: "组织架构混乱",
+    desc: "部门职责不清、一人多岗、权责交叉、指挥链混乱，是中小民企最常见的第一大问题。典型表现：销售副总兼管采购、生产部门兼管仓库、员工不知道听谁的。",
+    sols: [
+      {
+        name: "组织架构梳理与重构",
+        actions: [
+          "先做深度调研（一企一策，不套模板）：调研经营数据、人员心态、能力短板",
+          "按业务逻辑划分部门：销售与采购分离、采购/仓库/物流独立、生产专注制造",
+          "小企业用「中心制/部门制」精简层级；多业务板块可拆「事业部/小组织独立核算」",
+          "配套输出：组织架构图、部门职责手册、岗位说明书、工作分析表"
+        ],
+        tools: ["组织架构图", "部门职责手册", "岗位说明书", "工作分析表"],
+        speech: "「一个岗位设置不当造成的损失，远大于一个人的工资」——用数据化分析说服老板下定决心",
+        cases: [154, 145, 105, 104, 76, 73, 133]
+      }
+    ],
+    status: "已掌握",
+    note: "参考华腾汽配案例：架构理顺后，流程与绩效管理才有落点。"
+  },
+  {
+    id: "KB02",
+    problem: "薪酬体系缺失",
+    desc: "发工资凭感觉、年底分红靠老板拍脑袋、同岗不同酬、员工不知道钱怎么来的。多发人家嫌少，少发员工有意见。",
+    sols: [
+      {
+        name: "薪酬体系设计（五级/七级/九级薪酬）",
+        actions: [
+          "先做岗位价值评估（海氏评估法 / 点因素法），让定薪有科学依据",
+          "按等级设计薪酬结构：基本工资+绩效+提成+分红，员工能自己算出收入",
+          "销售团队常见改造：固定薪资 → 低底薪高提成 / 按利润提成；双轨制并行测试平滑过渡",
+          "配套「薪晋考」：薪酬、晋升、考核三表联动，让员工知道怎么努力能涨薪晋升"
+        ],
+        tools: ["五级/七级/九级薪酬表", "海氏岗位评估", "薪晋考三表", "工资套设计"],
+        speech: "「薪酬要环环相扣，让员工能算清楚：卖什么、卖多少、能赚多少」",
+        cases: [121, 110, 105, 131, 143, 128]
+      }
+    ],
+    status: "已掌握",
+    note: "薪酬改革要先讲清逻辑再动刀，双轨制测试可减少阻力。"
+  },
+  {
+    id: "KB03",
+    problem: "绩效考核流于形式",
+    desc: "考核走过场、大锅饭、凭印象打分、指标没数据支撑、搞几个月就废。员工把考核当扣钱工具而抵触。",
+    sols: [
+      {
+        name: "绩效考核真正落地",
+        actions: [
+          "指标从目标/流程/岗位职责中提取，避免什么都装进去（轻量化设计，只盯核心任务）",
+          "绩效面谈闭环：月初定指标、月末复盘、未完成事项重点跟进，不搞一刀切",
+          "考核结果与薪酬奖金直接挂钩，数据说话（计划达成率、资金回笼率、新品占比等）",
+          "先同频再执行：前期绩效面谈不与工资挂钩，员工接受后再绑定，降低抵触"
+        ],
+        tools: ["绩效考核表", "绩效面谈表", "KPI/OKR", "月度绩效复盘会"],
+        speech: "「绩效考核不是为了扣钱，而是统一方向，实现公司与员工双赢」",
+        cases: [152, 135, 105, 153, 101, 78, 130]
+      }
+    ],
+    status: "已掌握",
+    note: "宇特案例：先奖励后规范，绩效核心是激励不是扣钱。"
+  },
+  {
+    id: "KB04",
+    problem: "目标管理缺失",
+    desc: "目标凭感觉定、随口定、年底跑偏、部门各干各的、目标与执行脱节。",
+    sols: [
+      {
+        name: "目标管理闭环（三级目标+分解）",
+        actions: [
+          "目标设定：保底 / 平衡 / 挑战三级目标，上下结合共同制定（自己定的目标执行力更强）",
+          "年度目标逐层分解：公司→部门→个人，季度→月度→周度，人人头上有指标",
+          "配套工具：目标责任书（签字、拍照进群、纳入考核）、周计划周结果、OKR作战地图",
+          "用「目标六维导图」搭框架：先定总目标，再拆客户、产品、区域、渠道"
+        ],
+        tools: ["目标责任书", "三级目标表", "OKR作战地图", "目标六维导图", "周计划周结果表"],
+        speech: "「目标是自己部门定的，可实施性更强，执行力也更好」",
+        cases: [154, 151, 119, 129, 87, 95, 110]
+      }
+    ],
+    status: "已掌握",
+    note: "目标要能落到数据：多少客户、多少产品、哪些区域支撑业绩。"
+  },
+  {
+    id: "KB05",
+    problem: "老板亲力亲为",
+    desc: "老板当救火队长、事事请示、出差两三天都不放心、老板在才转、老板累垮企业停摆。",
+    sols: [
+      {
+        name: "责任下沉 + 系统托管，解放老板",
+        actions: [
+          "先搭组织与制度：岗位职责清晰、流程有标准、权责利匹配，让员工知道该干什么、干好有什么回报",
+          "用「动车理论」教育老板：好团队像动车每节车厢都带动力，不是绿皮火车全靠车头拉",
+          "培养管理者：授权试点→检查结果→逐步放权，老板聚焦战略与经营决策",
+          "用盯盘/经营分析会建立自运行机制：老板不在，系统照转"
+        ],
+        tools: ["组织系统七大模块", "盯盘机制", "经营分析会", "授权清单"],
+        speech: "「老板一定不要去干活，老板的任务就是用好人」「解放老板不是打高尔夫，是跳出来想更高维度的事」",
+        cases: [148, 110, 65, 133, 154, 127, 8, 2]
+      }
+    ],
+    status: "已掌握",
+    note: "老板解放的前提是系统运转；先立制度再谈授权。"
+  },
+  {
+    id: "KB06",
+    problem: "人才梯队断层",
+    desc: "招人难、留人难、新人没人带、老员工不愿带、人才断层、关键岗位依赖能人。",
+    sols: [
+      {
+        name: "人才盘点 + 招聘培养体系",
+        actions: [
+          "人才盘点（态度/能力/潜力三维度）：谁在混日子、谁有潜力，数据一摆一目了然",
+          "建岗位画像与人才画像：招聘有标准、面试有工具（业务漏斗逻辑：筛多少简历→邀约多少→录用多少）",
+          "定晋升通道与培养体系：薪晋考、内训、卓越大学式学习组织，新人成长可见",
+          "关键岗位人才：老师陪同面试、谈判技巧支持，引入外部高端人才"
+        ],
+        tools: ["人才盘点表", "人才画像", "招聘漏斗", "价值测评", "晋升通道表"],
+        speech: "「企业是有梯度的，人才是要更替的，要永远往强的地方走」",
+        cases: [146, 145, 130, 75, 128, 40, 136]
+      }
+    ],
+    status: "已掌握",
+    note: "招人留存率从「碰运气」到「可预测」，靠的是标准与测评。"
+  },
+  {
+    id: "KB07",
+    problem: "团队积极性低",
+    desc: "打工心态、混日子、大锅饭、干好干坏一个样、激励失灵、员工被动执行。",
+    sols: [
+      {
+        name: "激励机制设计",
+        actions: [
+          "机制要让「好的人更好，不好的人难受」，而非追求表面公平",
+          "常用工具：浮动底薪+阶梯提成、增量提成、价值分红、PK机制、公海池客户竞争",
+          "把奖励与数据挂钩并公开晾晒（周排名、数据晒出来），在乎面子的员工自然被激活",
+          "责任与利益深度绑定：谁分钱分得科学、能和绩效挂钩，谁就拿一等奖（案例化倒逼）"
+        ],
+        tools: ["浮动底薪阶梯提成", "价值分红", "PK机制", "公海池", "数据晾晒"],
+        speech: "「好的机制是从奴隶到将军的过程——没有利益内嵌的管理是不彻底的」",
+        cases: [119, 125, 130, 109, 143, 70, 2]
+      }
+    ],
+    status: "已掌握",
+    note: "先算清账再激励：盈亏平衡核算让员工知道多干能多赚。"
+  },
+  {
+    id: "KB08",
+    problem: "部门协同差",
+    desc: "部门墙、各自为政、推诿扯皮、本位主义、内耗严重、跨部门协调看脸色。",
+    sols: [
+      {
+        name: "打通协同：会议机制 + 利益绑定 + 流程梳理",
+        actions: [
+          "每周经营协同会：业务、产品、市场、职能围绕「销售增收+落地交付」以问题为导向找方案",
+          "把公司整体业绩与各部门绩效挂钩，让「公司好自己才能好」成为共识",
+          "梳理跨部门流程（销售→研发→生产→交付），明确责任人与衔接标准",
+          "供应链等可重组为项目制小单元，独立运作、快速响应、可复制裂变"
+        ],
+        tools: ["经营协同会", "跨部门流程表", "项目制小单元", "目标责任书"],
+        speech: "「现在销售说要给客户做方案，研发会主动跟进需求——公司好，自己才能好」",
+        cases: [136, 137, 143, 43, 121, 85, 73]
+      }
+    ],
+    status: "已掌握",
+    note: "协同问题本质是利益与目标没绑在一起。"
+  },
+  {
+    id: "KB09",
+    problem: "财务糊涂账",
+    desc: "财务只记账、看不懂报表、没核算账、业财脱节、不知道赚没赚钱、税务风险。",
+    sols: [
+      {
+        name: "财务体系规范（核算账 + 业财融合 + 预算）",
+        actions: [
+          "建核算账：盈亏平衡表、成本中心核算、三大报表，老板随时看清利润与现金流",
+          "财务从「事后记账」转「过程管控」：月度经营分析、十张报表体系、每月5号前核算完毕",
+          "业财融合：财务懂业务、能带数据与销售部门沟通（单品贡献率、毛利率、库存周转率）",
+          "预算管理：费用预算细化到成本中心，全面预算、先算后做"
+        ],
+        tools: ["盈亏平衡表", "三大报表", "经营分析会", "预算表", "业财看板"],
+        speech: "「经营的事都干完了，财务只能照单全收」「财务数据清晰，企业的规模和利润是设计出来的」",
+        cases: [132, 147, 75, 91, 96, 49, 66, 113]
+      }
+    ],
+    status: "已掌握",
+    note: "财务辅导常是第二单来源：组织系统做完了，老板最痛的就是算不清账。"
+  },
+  {
+    id: "KB10",
+    problem: "二代接班传承",
+    desc: "二代接班忐忑、老臣不服、新老观念冲突、家族企业交接难题、企业传承断层。",
+    sols: [
+      {
+        name: "代教式辅导 + 系统托底",
+        actions: [
+          "用体系帮二代快速了解全公司：组织系统各模块系统学习，几个月吃透运营",
+          "用「目标责任书」等透明工具化解新老交替矛盾，树立接班人威信",
+          "老师在具体问题与人际关系处理上给予关键指导，推动二代勇敢决策",
+          "同步做老员工过渡方案：薪酬岗位数据化挂钩，照顾历史贡献（两年软着陆）"
+        ],
+        tools: ["目标责任书", "组织系统模块", "老员工过渡方案", "股权/接班人计划"],
+        speech: "「企业就像球队，需要新鲜血液来保持高水平竞争」「真的要到了那个岗位，我会站在更高维度去思考」",
+        cases: [154, 59, 46, 45, 10, 69, 48]
+      }
+    ],
+    status: "已掌握",
+    note: "二代接班是山西民企的高频诉求，可重点开发。"
+  },
+  {
+    id: "KB11",
+    problem: "经验管理依赖",
+    desc: "凭经验、凭感觉、拍脑袋决策、人治不法治、管理者是生意人出身、无系统方法。",
+    sols: [
+      {
+        name: "从经验管理到系统管理",
+        actions: [
+          "先改认知：长松课程（组织系统班/操盘手）打开老板系统思维",
+          "落地制度与流程：制度汇编、流程标准化、手册化，让管理有章可循",
+          "数据化决策：经营分析会用数据说话，先调研再测算再决策",
+          "「先共识再落地」：老师讲同样观点团队更易接受，比老板自己讲有效"
+        ],
+        tools: ["制度汇编", "流程手册", "经营分析会", "数据看板"],
+        speech: "「我们以前是用经验和技能在干，现在是用逻辑和数据在经营」",
+        cases: [152, 149, 137, 80, 132, 112, 105]
+      }
+    ],
+    status: "已掌握",
+    note: "认知改变是第一步，也是最难的一步——常从课程切入。"
+  },
+  {
+    id: "KB12",
+    problem: "成本利润压力",
+    desc: "有销量无利润、利润薄、成本失控、浪费严重、规模翻倍利润不涨。",
+    sols: [
+      {
+        name: "利润经营（降本增效 + 独立核算）",
+        actions: [
+          "算清盈亏平衡：每个月做到多少才赚钱、增产降废能多赚多少（复利效应）",
+          "利润经营系统/阿米巴/小组织独立核算：每个团队盯经营利润，报表看赚没赚钱",
+          "降本目标管理：设定年度降本目标、八大浪费识别（库存、返工、等待等）",
+          "销售从「业绩提成」改「利润提成」：员工主动算账、关注毛利、拒绝劣质客户"
+        ],
+        tools: ["盈亏平衡表", "阿米巴/小组织核算", "降本目标表", "利润提成制", "八大浪费"],
+        speech: "「先算后做」「不是靠抠钱，是靠把钱花在刀刃上」",
+        cases: [148, 147, 109, 105, 94, 86, 55, 64]
+      }
+    ],
+    status: "已掌握",
+    note: "利润经营是组织系统后的高价值第二单，适合有规模无利润的企业。"
+  },
+  {
+    id: "KB13",
+    problem: "会议决策低效",
+    desc: "开会走过场、救火式开会、会而不议、议而不决、口头安排转身就忘、决策靠感觉。",
+    sols: [
+      {
+        name: "会议系统与经营分析会",
+        actions: [
+          "建立三级会议体系：日调度会、周例会、月总结会，白纸黑字责任到人",
+          "经营分析会规范化：会前有数据、会中有决议、会后有跟进，聚焦核心项目",
+          "质询会模式：让团队主动暴露问题、迭代方案，加速组织进化",
+          "会议纪律立规矩（迟到罚款、手机静音、老板双倍罚），长期坚持"
+        ],
+        tools: ["三级会议体系", "经营分析会模板", "质询会", "会议纪要责任表"],
+        speech: "「以前开会跑题，现在开会先对考核表，所有人围绕战略目标走」",
+        cases: [126, 77, 76, 121, 94, 111, 23]
+      }
+    ],
+    status: "已掌握",
+    note: "会议低效背后是目标与数据缺失，先补数据再开好会。"
+  },
+  {
+    id: "KB14",
+    problem: "回款现金流紧张",
+    desc: "回款靠催、资金紧张才追、劣质客户拖欠、现金流断裂风险、账期长利润被吃掉。",
+    sols: [
+      {
+        name: "回款与现金流机制化",
+        actions: [
+          "回款专项会议：梳理原因、制定策略、明确责任人与检查机制（周复盘盯回款）",
+          "回款管理机制化：不管资金紧不紧张，都按约定时间节点追踪",
+          "销售改利润提成+回款挂钩，从源头拒绝低价长账期劣质客户",
+          "应收账期管理纳入考核，PK机制收回死账"
+        ],
+        tools: ["回款专项会", "回款追踪表", "利润提成制", "应收考核"],
+        speech: "「以前回款就是看心情，现在每周一复盘要盯回款，现金流良性多了」",
+        cases: [143, 119, 88, 105]
+      }
+    ],
+    status: "已掌握",
+    note: "回款问题常与销售机制、客户质量绑定，需组合解决。"
+  },
+  {
+    id: "KB15",
+    problem: "文化思想不统一",
+    desc: "团队认知断层、老板懂员工不懂、各说各话、学习难落地、思想无法统一。",
+    sols: [
+      {
+        name: "企业文化建设 + 学习型组织",
+        actions: [
+          "全员思想启动：让员工明白「公司像土地，只索取不滋养，最后大家都没未来」",
+          "读书会/晨读/分享会：让员工上台讲、建立共同语言与学习氛围",
+          "价值观梳理：确立核心价值观，作为考核与股权激励的准绳",
+          "老板带头学：老板认知先变，再带团队同频（老板进步了，团队接不住也不行）"
+        ],
+        tools: ["读书会", "核心价值观梳理", "冠军精神/狼性文化", "学习型组织"],
+        speech: "「思想统一不了的时候，就要用目标统一它」「一人进步没用，团队同频才有效」",
+        cases: [150, 152, 149, 108, 89, 61, 52]
+      }
+    ],
+    status: "已掌握",
+    note: "文化是慢变量，但决定制度能否真正落地。"
+  },
+  {
+    id: "KB16",
+    problem: "营销乏力",
+    desc: "靠老客户转介绍、销售凭感觉、没有渠道打法、产品上新靠运气、拓客无章法。",
+    sols: [
+      {
+        name: "营销体系搭建",
+        actions: [
+          "客户分级：重点客户/未来客户分层管理，合理分配资源（KA+长尾）",
+          "销售手册+渠道专人负责：见什么客户怎么说、问题怎么引导，把销售小白培养成精英",
+          "爆品公式：季节原料+复合口味+网红颜值=爆品；研究客户开始，全域推广（抖音/小红书/点评）",
+          "招商体系：连锁标准化、加盟商三级考核（理论笔试+实操+实战），招商会流程化",
+          "营销辅导：月度营销分析会、盯盘，案例教学+理论赋能，老带新"
+        ],
+        tools: ["客户分级表", "销售手册", "爆品公式", "招商体系", "营销分析会"],
+        speech: "「市场规划不是凭感觉，而是先算后干」",
+        cases: [151, 102, 128, 61, 107, 125, 77]
+      }
+    ],
+    status: "已掌握",
+    note: "营销辅导适合有产品但没打法、增长停滞的企业。"
+  },
+  {
+    id: "KB17",
+    problem: "战略方向模糊",
+    desc: "走一步看一步、业务太杂不聚焦、凭直觉投资、不知道往哪发力。",
+    sols: [
+      {
+        name: "战略解码与聚焦",
+        actions: [
+          "战略梳理：找到自身优势、定义战略，做三年/五年规划，明确业务聚焦方向",
+          "投资回报测算：一个店/项目投多少钱、多久回本、利润结构如何，先算明白再干",
+          "单店/单项目盈利模型：打造可复制的盈利样板，再谈扩张",
+          "战略目标分解落地：战略→年度→季度→月度KPI，每半年复盘调整"
+        ],
+        tools: ["三年战略规划", "投资回报测算表", "单店盈利模型", "战略解码会"],
+        speech: "「不是为连锁而连锁，是为每个单店都能健康存活、盈利」「做一米宽，一万米深」",
+        cases: [151, 150, 112, 140, 102, 33, 27]
+      }
+    ],
+    status: "已掌握",
+    note: "战略模糊的老板常被课程启发后引入辅导——课程是入口。"
+  },
+  {
+    id: "KB18",
+    problem: "管理基础薄弱",
+    desc: "制度缺失、流程混乱、没有标准手册、从零起步、游击队/草台班子状态。",
+    sols: [
+      {
+        name: "制度与流程标准化（从0到1）",
+        actions: [
+          "制度汇编：从架构、行政制度到考核制度全套梳理，让管理有据可依",
+          "流程梳理与手册化：公司到岗位的流程、表格、表单，标准化作业指导书",
+          "岗位标准建立：岗位说明书、作业指导书、管理手册，随业务迭代升级",
+          "配套信息化：流程嵌入ERP/OA/软件系统，核心事务快速响应"
+        ],
+        tools: ["制度汇编", "流程手册", "岗位说明书", "管理手册", "信息化系统"],
+        speech: "「麻雀虽小五脏俱全，要把管理走在别人前面，而不是靠老板文化凭感觉管」",
+        cases: [122, 113, 103, 142, 97, 118, 47]
+      }
+    ],
+    status: "已掌握",
+    note: "管理基础薄弱的企业，组织系统首期价值最明显。"
+  }
+];
+
+if (typeof module !== "undefined" && module.exports) { module.exports = SEED_KB; }
+
+</script>
+<script>
+/* ============================================================
+   长松咨询 · 案例大数据系统 — 九大模块痛点库（拜访弹药库）
+   来源：《核心痛点总结202604版.docx》民营企业组织系统全模块问题&老板痛点终极梳理
+   结构：module 模块名 | metaphor 定位比喻 | problems 核心问题清单 | bossPains 老板的核心痛苦
+   ============================================================ */
+var SEED_PLAYBOOK_OPEN = "X总，您天天头疼的、看似零散的“员工不干活、部门总扯皮、目标完不成、人才留不住”，本质都不是人的问题，而是组织系统的系统性缺失。\n人事管的是“入职、考勤、发工资”这些小事，而组织系统管的是你的利润、你的精力、你的增长、你的企业生死。下面每一个问题，都在啃你的钱、耗你的命、堵你的路。";
+var SEED_PLAYBOOK_CLOSE = "X总，以上所有问题，看似是零散的管理问题、人事问题，本质上都是你的企业没有一套完整的、可落地的组织系统。\n没有这套系统，你永远是公司最大的业务员、最大的救火队长、最累的人，企业永远做不大、也做不强，甚至随时会因为一个人才流失、一个管理漏洞，就陷入危机。\n我今天跟您谈的，从来都不是HR的工作，而是您的老板工程、利润工程、解放工程、百年企业的根基工程";
+var SEED_PLAYBOOK = [
+  {
+    id: "PB01",
+    module: "目标规划",
+    metaphor: "企业增长的「方向盘」",
+    problems: [
+      "1、目标维度极度单一：要么不定目标，要么只定业绩/团队总目标，缺少支撑总目标的多维度二级、三级子目标（产品、利润、人效、成本、客户、交付等），只有结果要求，没有过程管控抓手。",
+      "2、目标未分层、不下放：企业总目标只停留在老板和高管层，没有拆解到部门、岗位、个人，基层员工完全不清楚公司目标和自己的工作有什么关系。",
+      "3、目标与利益完全脱钩：没有做到利益内嵌、强绑定，目标责任无法下沉，干好干坏和员工收入、发展没关系，全公司只有老板一个人为目标着急。",
+      "4、目标无闭环管理：只有年初定目标，没有月度/季度过程追踪、复盘优化，目标完不成也没有对应的奖惩与补救动作，最终沦为一句口号。"
+    ],
+    bossPains: [
+      "你定的年度目标，全公司只有你一个人当真、一个人焦虑，团队都觉得是“老板的目标”，和自己没关系",
+      "只盯着最终业绩，过程完全失控，月底/年底才发现目标差一大截，想补救都来不及",
+      "目标喊得震天响，落地全靠你自己催，不催就不动，你天天当“救火队长”，身心俱疲"
+    ]
+  },
+  {
+    id: "PB02",
+    module: "组织架构",
+    metaphor: "企业经营的「骨架」",
+    problems: [
+      "1、架构设计逻辑完全错误：不是“因岗设人”，而是“因人设岗”，根据现有人员的能力调整架构，而非根据战略目标、岗位需求设计架构，架构完全不支撑企业发展。",
+      "2、无未来架构规划：只有当下的组织架构图，没有匹配3-5年战略的未来架构，企业发展到哪，架构临时改到哪，毫无前瞻性。",
+      "3、管理层级彻底混乱：员工对汇报线、管理层级完全不清晰，越级汇报、越级管理频发，员工有事直接找老板，中层干部有责无权、无事可管，既不用担责任，也得不到成长。",
+      "4、岗位权责边界全面模糊：岗位工作内容重叠、责任空白，出现“有人忙死、有人闲死”；功劳大家抢、责任没人担，推诿扯皮、内部严重内耗，很多关键工作没人做，贻误商机。",
+      "5、跨部门协作机制完全缺失：业务、运营、生产、职能等部门之间，没有明确的协作流程与责任划分，部门墙厚重，配合全靠人情，出问题全靠老板协调。",
+      "6、架构调整与岗位管理脱节：架构频繁调整，但对应的岗位职责、权限、流程没有同步更新，企业上下对岗位认知不统一，新业务、新岗位工作根本无法落地。"
+    ],
+    bossPains: [
+      "公司80%的精力都用在协调部门矛盾、解决推诿扯皮上，根本没时间抓战略、跑市场",
+      "你成了全公司唯一的“问题解决终端”，大事小事都找你，手机24小时不敢关机，离了公司就转不动",
+      "中层干部成了“传话筒”，既不担责，也不扛事，更不会带团队，你想放权都不敢放，越做越累"
+    ]
+  },
+  {
+    id: "PB03",
+    module: "工作分析/岗位职责",
+    metaphor: "岗位管理的「说明书」",
+    problems: [
+      "1、岗位职责无标准化、无文字化：责、权、利没有形成正式的文字标准，全靠口头交代、临时安排，员工不清楚自己该干什么、不该干什么。",
+      "2、岗位职责无量化、无边界：只有模糊的工作内容描述，没有明确的工作标准、交付结果、权限范围，员工不知道做到什么程度才算合格，上级也没法精准评价工作好坏。",
+      "3、人岗严重不匹配：以人定岗而非以岗定人，岗位要求和员工能力完全不匹配，岗位责任界定全靠工作中试错磨合，员工效率低下，管理束手束脚。",
+      "4、流程无留存、能力难复制：核心工作流程只有口头描述，没有文字化的SOP标准，老员工一走，经验就断档，团队能力无法复制，新人上手极慢。",
+      "5、结果与付出认知严重偏差：员工只讲苦劳、不讲功劳，对自己的工作结果没有清晰定义，总觉得自己付出很多，却得不到对应的回报，怨气重、积极性低。"
+    ],
+    bossPains: [
+      "同一件事，换个人做就完全变样，结果全靠员工自觉，你根本没法标准化管控",
+      "员工天天喊累、喊委屈，你却分不清他是真干活，还是无效内耗，奖罚都没依据",
+      "管理全靠人情，干部不好意思管员工，员工觉得干部针对自己，团队氛围拧巴，内耗严重"
+    ]
+  },
+  {
+    id: "PB04",
+    module: "绩效考核",
+    metaphor: "结果落地的「指挥棒」",
+    problems: [
+      "1、考核体系碎片化、无系统化：没有全公司统一的考核体系，多为单一的业务业绩考核，职能、管理、技术岗位无考核，考核无法覆盖全员，对员工与干部成长毫无引导性。",
+      "2、考核指标设计完全不合理：①指标太多太杂，盲目模仿同行，员工不认可、不接受；②指标不量化、不具体，全凭感觉打分，考核流于形式；③只考核业绩结果，不考核成本、成长、流程等维度，导致员工只认钱，不关心公司利润，也不愿意学习成长。",
+      "3、考核层级不公平：只对中基层制定考核，不考核高层管理者，做不到上下同责，员工觉得极度不公平，考核执行阻力极大。",
+      "4、考核与管理完全脱节：只考核不辅导，只罚不奖，没有通过考核发现问题、帮助员工改善能力，考核沦为“扣工资的工具”，员工怨声载道、集体唱反调。",
+      "5、考核无底层支撑：没有量化的岗位职责做基础，考核指标全凭感觉定，无法精准衡量岗位价值与工作结果。",
+      "6、考核与激励彻底脱钩：考核结果和薪酬、晋升、评优不挂钩，或者挂钩不明显，干好干坏差别不大，考核完全没有激励性。"
+    ],
+    bossPains: [
+      "不做考核还好，一做考核全公司都抱怨，员工觉得你在想方设法扣工资，好心办坏事",
+      "考核只看业绩，员工为了冲业绩不计成本、牺牲利润，看似业绩涨了，公司反而没赚到钱",
+      "干得好的员工得不到认可，混日子的员工蒙混过关，劣币驱逐良币，优秀人才留不住"
+    ]
+  },
+  {
+    id: "PB05",
+    module: "薪酬体系",
+    metaphor: "人才激励的「发动机」",
+    problems: [
+      "1、薪酬结构不合理、不规范：①薪酬结构单一，固定工资占比过高，浮动激励不足，干多干少差别不大；②工龄工资只和入职时间挂钩，不和能力、结果挂钩，老员工躺平混日子，新员工没动力；③销售团队薪酬没有体系化，提成规则朝令夕改，全靠口头承诺，员工没有安全感。",
+      "2、薪酬激励性严重不足：①高层薪酬不明确，提成、奖金和业绩达标强绑定，但达标门槛过高，大概率拿不到，高管有“降工资”的感觉，动力严重不足；②关键岗位、核心人才没有形成薪酬标杆，对内不公平、对外没竞争力，人才招不来、留不住；③薪酬奖惩规则不清晰，只有罚没有奖，对员工没有吸引力，也无法培养员工的归属感。",
+      "3、薪酬与战略完全脱节：薪酬整体规划和企业发展阶段、战略目标完全不匹配，无法支撑企业扩张、新业务拓展。",
+      "4、薪酬发放不规范：存在公私混发、拆分工资、口头约定薪酬等情况，既存在合规风险，也容易引发劳资纠纷。"
+    ],
+    bossPains: [
+      "工资没少发，成本没少花，员工却依然没动力、不感恩，你觉得钱白花了，员工觉得钱给少了",
+      "核心人才留不住，外面的人才招不来，薪酬没竞争力，团队越做越弱",
+      "高管拿着高薪，却不担责任、不扛目标，你觉得高薪打了水漂，高管觉得收入没保障，互相不信任"
+    ]
+  },
+  {
+    id: "PB06",
+    module: "生涯规划",
+    metaphor: "人才留存的「导航图」",
+    problems: [
+      "1、职业发展通道完全缺失：企业内部没有打通管理、技术、专业等多通道的生涯规划，员工在公司看不到未来，不知道自己能干到什么程度。",
+      "2、晋升标准不清晰、不透明：没有明确的、文字化的晋升标准，全靠领导感觉、老板印象评判，没有数据化、标准化的晋升规则，员工没有安全感，也不知道该往哪个方向努力。",
+      "3、晋升机制不公平：能上不能下，论资排辈，元老、亲属占着岗位，有能力的年轻员工没有晋升机会，成长路径被堵死。",
+      "4、干部培养体系空白：没有基于生涯规划的干部储备、培养机制，公司想扩张、想发展，却没有合格的管理干部可用，老板无人可用。"
+    ],
+    bossPains: [
+      "员工干不了多久就离职，留不住人，年年招人、年年缺人，招聘成本、试错成本高到离谱",
+      "有能力的员工看不到希望，要么躺平混日子，要么跳槽走了，公司成了“行业人才培训基地”",
+      "想把公司做大，却没人能帮你扛事，核心岗位无人可用，你永远冲在第一线，永远不敢休息"
+    ]
+  },
+  {
+    id: "PB07",
+    module: "培训体系",
+    metaphor: "能力复制的「孵化器」",
+    problems: [
+      "1、培训体系完全空白、无规划：培训全凭老板一时兴起，非常随意，没有系统化、分岗位、分层级的人才培养计划，想起来就训，想不起来就不管。",
+      "2、培训内容严重脱节：①内容碎片化、不成体系，学的都是大道理、空理念，和实际工作没关系，落不了地；②盲目跟风学习，什么火学什么，内容高大上，和企业现状、岗位需求完全不匹配；③只培训业务技能，缺少文化、心态、管理能力、职业素养、基础礼仪等培训，员工只会低头干活，人效极低。",
+      "3、培训方式低效落后：①只靠老带新的“师傅带徒弟”模式，师傅能力参差不齐，新人成长速度慢，能力也参差不齐；②只有理论灌输，没有通关训练、实操演练，学完就忘，完全是假学习、无效学习；③老板爱学习、天天上课，但是不带动干部、员工一起学，老板认知上去了，团队能力跟不上，上下不同频。",
+      "4、培训无闭环、无效果：①选师不准确，不知道谁讲的好、谁的内容适合自己，钱花了没效果；②学习内容不统一，一人学一个样，团队没有统一的认知、统一的方法；③培训没有考核、没有落地追踪、没有知识沉淀，学完就过，没有积累，过后完全没效果，无法把个人能力转化为组织能力。",
+      "5、管理层能力全面缺失：中基层管理者缺乏基本的管理知识、人力资源管理能力，不会带团队、不会管员工、不会做辅导，团队执行力差，管理混乱。"
+    ],
+    bossPains: [
+      "培训费没少花，课没少上，员工能力一点没提升，团队还是老样子，钱全打了水漂",
+      "老员工一走，经验就带走了，团队能力无法复制，永远靠几个能人撑着，企业做不大、做不强",
+      "你学了一堆先进的管理理念，回来给团队讲，他们完全听不懂、也做不到，你觉得团队跟不上你的脚步，无比焦虑"
+    ]
+  },
+  {
+    id: "PB08",
+    module: "招聘体系",
+    metaphor: "人才入口的「过滤器」",
+    problems: [
+      "1、招聘全凭感觉，无标准、无工具：没有清晰的岗位胜任力标准，用人部门提不出明确的用人需求，招聘全靠面试官的眼缘、感觉，缺少专业的测评工具、面试流程，招错人的概率极高。",
+      "2、招聘试错成本极高：招进来的人不符合岗位要求，欠资格上岗，要么干不出活，要么很快离职，浪费了招聘成本、时间成本、培养成本，还耽误了业务进度。",
+      "3、企业人才吸引力不足：薪酬、品牌、发展通道没有竞争力，核心人才、优质人才招不来，只能招到能力一般的人，团队能力越来越弱。",
+      "4、招聘与培养完全脱节：只负责招人，不负责新人融入、带教，新员工入职后没人管、没人带，离职率居高不下。"
+    ],
+    bossPains: [
+      "天天招人，却永远缺人，合适的人招不来，招来的人用不成，HR天天忙，却没结果",
+      "招错一个核心岗位的人，不仅白花了几十万工资，还把业务搞砸了，损失惨重，你却毫无办法",
+      "新员工来了就走，离职率高到离谱，团队永远在磨合，永远不稳定，业务根本没法稳步推进"
+    ]
+  },
+  {
+    id: "PB09",
+    module: "运营管控体系",
+    metaphor: "老板落地的「抓手」",
+    note: "民营老板最头疼、却最容易忽略的落地配套模块，所有组织系统的落地，都靠这个模块托底。",
+    problems: [
+      "1、计划管理全面缺失：只有年度目标，没有月度、周度的工作计划，工作想到哪做到哪，脚踩西瓜皮，滑到哪算哪，执行力完全没有保障。",
+      "2、会议管理完全无效：开会无主题、无流程、无决议、无跟踪、无改善，开会变成了吐槽会、扯皮会，浪费了大量时间，却解决不了任何问题。",
+      "3、预算体系彻底空白：没有全面的预算管理计划，成本、费用、投资全凭老板一支笔，花超了才知道，利润被无意义的成本吞噬，现金流风险极高。",
+      "4、制度管理全面失效：公司制度有，但宣导不到位，员工不知道、不了解、不执行，制度写在纸上、挂在墙上，完全沦为摆设。",
+      "5、团队执行力极度低下：老板安排的工作、提出的问题，团队只听不做，或者做了没结果，虎头蛇尾，老板天天催，团队天天拖，指令落不了地。",
+      "6、跨部门沟通彻底失效：部门之间信息不互通、职责不清晰，沟通成本极高，小事也要老板出面协调，部门之间互相甩锅、互相拆台。"
+    ],
+    bossPains: [
+      "你说的话没人听，定的事没人做，团队执行力差到极致，你像一个孤家寡人，有劲没处使",
+      "公司天天开会，却永远解决不了问题，越开会越乱，越开会越内耗，你看着都头疼",
+      "钱天天在花，却不知道花在哪了，年底一算账，业绩没少做，利润却没剩下，白忙一年",
+      "离了公司就不行，出去几天，公司就乱成一锅粥，永远没法脱身，没有自己的时间，身体和精神都被拖垮"
+    ]
+  }
+];
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { SEED_PLAYBOOK, SEED_PLAYBOOK_OPEN, SEED_PLAYBOOK_CLOSE };
+}
+
+</script>
+<script>
+/* ============================================================
+   长松咨询 · 案例大数据系统 — 顾问式拜访模型
+   来源：《顾问式拜访模型：从开场到结束的全流程实战培训.pptx》19页
+   结构：认知公式 → 理论模型 → 拜访流程四步 → 商机评估工具 → 实战案例 → 总结
+   ============================================================ */
+var SEED_CONSULT = {
+  title: '顾问式拜访模型',
+  subtitle: '从开场到结束的全流程实战培训 · 构建以客户为中心的顾问式销售闭环。告别传统推销模式，掌握系统化的拜访方法论：破冰开场、需求挖掘、方案呈现、异议处理及成交缔结的全链路关键动作。',
+  formula: '销售成功 = 加强的合作关系 + 反复的业务 + 稳定的客户推荐',
+  formulaNotes: [
+    {t:'01 加强的合作关系', d:'超越简单买卖，成为客户业务上的智囊团与战略合作伙伴，深度绑定价值诉求，建立不可替代的信任连接。'},
+    {t:'02 反复的业务', d:'基于信任与持续交付的价值，让客户愿意不断复购产品或服务，形成稳定的业务流，降低获客成本，提升效益。'},
+    {t:'03 稳定的客户推荐', d:'满意的客户会成为品牌的“销售代言人”，主动进行口碑传播，为企业带来低成本、高转化的新商机与优质流量。'}
+  ],
+  vs: {
+    tradTitle: '传统销售模式：以产品为核心的交易导向',
+    trad: ['关注一次性交易，强调功能与价格', '聚焦产品本身的特性和价格优势，试图通过单向的说服和推销技巧，促成客户尽快下单成交。', '核心目标：完成“成交”动作', '以销售业绩为唯一导向，忽视客户的深层需求，缺乏对客户长期价值的挖掘，难以建立持久信任。'],
+    consTitle: '顾问式销售模式：以客户为核心的价值导向',
+    cons: ['深耕长期关系，提供解决方案与价值', '通过双向沟通深入洞察客户痛点，将产品转化为解决问题的方案，注重为客户创造实际的商业价值。', '核心目标：“帮助客户成功”', '以客户的成功为己任，建立顾问式的伙伴关系，在成就客户的过程中实现自身业绩的可持续增长。'],
+    key: '关键转变：从“单向推销”走向“双向引导”，这是适应市场竞争、构建品牌护城河的核心路径。'
+  },
+  theory: [
+    { name: '钻石模型', desc: '顾问式销售的方法论基石', items: [
+      {t:'问题 (Pain) —— 需求的客观源头', d:'识别客户当前真实存在的现状缺口、业务痛点与现存矛盾。通过现状调研、场景还原，客观厘清客户正在承受的损失、低效、风险等现实问题；区分表面现象与根源矛盾，为后续挖掘变革动因建立客观事实依据，回答「当下正在发生什么不利情况」。'},
+      {t:'动因 (Why) —— 行动的根本起点', d:'挖掘客户采取购买行动的核心驱动力，这是销售的逻辑原点。通过专业提问，引导客户清晰认知自身的痛点、需求与愿景，明确“为什么必须改变”，为后续方案植入建立情感与理性的双重锚点。'},
+      {t:'方法 (How) —— 落地的实施路径', d:'承接客户的核心动因，提供切实可行的解决方案与实施步骤。这是将抽象需求转化为具象行动的关键环节，重点在于展示方案的逻辑性、可操作性与适配性，让客户看到“如何一步步实现目标”。'},
+      {t:'价值 (Value) —— 决策的衡量标尺', d:'聚焦客户能获得的显性与隐性收益，包括效率提升、成本节约、风险规避等。价值是客户购买决策的最终依据，需将方案的功能优势转化为客户可感知的商业成果，回答“为什么值得投资”。'},
+      {t:'阻碍 (Block) —— 进程的关键破局点', d:'预判并识别客户决策链中的各类障碍，如预算限制、流程审批、竞品对比等。化解阻碍不是掩盖问题，而是主动提供应对策略，消除客户顾虑，这是推动销售从方案到成交的必要保障。'}
+    ]},
+    { name: '动因铁三角', desc: '揭示客户采购的深层动机', items: [
+      {t:'最好的时间 (Timing)', d:'核心聚焦“为什么是现在？”。挖掘客户是否存在明确的时间节点、项目窗口期或紧迫的业务截止点，将隐性的时间压力转化为显性的采购驱动力，让客户意识到延迟决策的成本。'},
+      {t:'好的收益 (Gain)', d:'明确购买后可获得的显性与隐性价值。涵盖业务层面的增长、效率提升、成本节约，以及决策人个人层面的职业成就、管理效能优化等，将抽象的价值具象化，锚定客户的利益诉求。'},
+      {t:'负面的影响 (Pain)', d:'剖析“不购买”带来的后果。引导客户思考市场份额丢失、运营风险加剧、个人职业发展受阻等潜在危机，利用损失厌恶心理，强化客户解决问题的必要性与迫切性。'}
+    ], tips: [
+      '提问技巧·时间维度拉伸：通过“如果这个问题在未来一个季度/半年不解决，会对核心业务指标产生多大连锁影响？”的设问，将短期问题延伸至长期后果，放大时间紧迫感。',
+      '提问技巧·量化损失计算：引导客户估算“该问题每年造成的直接经济损失、人力损耗或机会成本是多少？”，用具体数字呈现 Pain 与 Gain 的差值，让决策依据更直观、更具说服力。'
+    ]},
+    { name: '竞争分析与决策角色', desc: '竞争战略四象限 + 复杂采购决策链', items: [
+      {t:'制胜点（核心优势）', d:'客户高度认可的独特价值，是我们区别于竞品的关键壁垒，需持续强化并作为市场推广的核心抓手。'},
+      {t:'潜力点（改进机会）', d:'尚未被充分挖掘或强调的隐性优势，通过策略优化和资源投入，可转化为新的市场制胜点，扩大竞争优势。'},
+      {t:'制败点（明显劣势）', d:'当前存在的明显短板，易被竞争对手攻击，需制定主动弥补方案或通过服务策略弱化其负面影响。'},
+      {t:'风险点（外部威胁）', d:'涵盖竞争对手的核心优势及潜在的市场政策变化，需建立预警机制，提前制定应对策略以规避风险。'}
+    ], roles: [
+      {t:'A - 最终批准者', d:'拥有最终财务或行政审批权的高层人员，通常关注合规性、预算与战略一致性，是决策链的终点。'},
+      {t:'K - 关键决策人', d:'负责制定核心采购标准的关键人物，对选型结果起决定性影响，需重点沟通产品价值与业务契合度。'},
+      {t:'E - 评估者', d:'负责具体的产品测试、参数对比与方案评估，关注技术指标、易用性与服务细节。'},
+      {t:'U - 使用者', d:'实际操作产品的一线人员，反馈直接体验，其满意度直接影响后续采购决策与续约可能。'},
+      {t:'O - 影响者', d:'包括顾问、技术专家等，虽无直接决策权，但能通过专业建议间接左右关键决策人的判断。'}
+    ]}
+  ],
+  flow: [
+    { stage:'STEP 1 · 开场三件事', name:'建立信任的黄金三分钟',
+      summary:'高效的开场不仅是流程，更是尊重与价值的传递，做好这三步，为后续深入合作奠定坚实的信任基石。',
+      steps: [
+        {t:'自我介绍 · 建立形象', d:'快速建立专业身份认知，消除陌生感，让客户对沟通对象产生初步信任。', say:'“王总您好，我是XX公司的顾问。过去5年我们专注服务制造企业，已帮助20+同行提升员工工作效率，今天特别感谢您抽出时间交流。”'},
+        {t:'拜访目标 · 对齐期望', d:'明确沟通的方向与时长，让客户感受到被尊重和掌控感，避免因信息不对称产生抵触情绪。', say:'“今天想占用您30分钟，主要探讨贵司在经营管理上的挑战，以及我们的解决方案是否适配。如果中途您觉得方向不对，我们随时调整，您看可以吗？”'},
+        {t:'呈现价值 · 激发兴趣', d:'将抽象的沟通具象化为客户可感知的利益，直击痛点，让客户意识到交流的实际意义。', say:'“我们的目标是希望通过今天的交流，帮您梳理出一种优化方案，预计能将员工工作效率提升30%左右，这也是我们服务多家客户验证过的成果。”'}
+      ]},
+    { stage:'STEP 2 · 需求挖掘', name:'“探、定、影、达”四步法',
+      summary:'需求挖掘是顾问式拜访的核心环节，四步法层层递进：从模糊的问题表象切入，逐步引导客户厘清需求，形成清晰的合作共识。这是一个循环验证的过程，而非简单的线性步骤，需灵活穿插运用。',
+      steps: [
+        {t:'探 (Explore) — 探究问题与机会', d:'广泛了解客户业务现状，打破信息壁垒，敏锐捕捉潜在的痛点问题与未被满足的机会点，建立初步的信任连接。', say:'运用开放式问题引导表达：“您能谈谈目前业务板块的整体运营情况吗？”“在这个领域，您觉得团队当前面临的最大挑战是什么？”'},
+        {t:'定 (Define) — 定性定量定细节', d:'将客户模糊的表述具象化，精准界定问题的性质（是流程还是人员）、量化影响程度（损失/效率），并锁定关键细节。', say:'结合铺垫式与定向式提问：“这个问题主要表现在哪些具体环节？”（定性）“该问题每月大概造成多少经济损失？”（定量）'},
+        {t:'影 (Shape) — 影响思考，实现合作', d:'引导客户跳出固有认知，从多维视角审视问题，激发客户主动思考，共同探索解决方案的可能性，而非被动接受建议。', say:'善用假设式问题描绘未来价值、影响式问题放大痛点或收益：“如果能将处理时间缩短一半，对您团队的人效提升会有什么具体影响？”“除了现有的方式，您觉得行业内还有哪些方案值得参考？”'},
+        {t:'达 (Agree) — 达成共识，锚定方向', d:'确保双方对当前面临的核心问题、真实需求优先级以及后续行动步骤形成完全一致的理解，消除信息偏差，为方案落地确立基础。', say:'通过总结式与确认式问题：“王总，我梳理一下，目前核心痛点是流程繁琐和成本过高，接下来我们优先解决流程优化问题，您认同这个思路吗？”'}
+      ]},
+    { stage:'STEP 3 · 异议处理', name:'将挑战转化为机会',
+      summary:'客户提出异议并非拒绝，而是深度思考的信号。处理异议的核心不在于反驳，而在于理解客户顾虑、建立情感连接，最终将问题转化为促成合作的契机。',
+      steps: [
+        {t:'澄清 (Clarify) · 确认问题本质', d:'通过开放式提问明确客户顾虑，避免主观臆断，确保理解无偏差。', say:'“为了更好地理解，您能具体说说担心的核心点是什么吗？”'},
+        {t:'同理 (Empathize) · 建立情感连接', d:'站在客户视角表达理解，降低对立感，让客户感受到被尊重与接纳。', say:'“我理解您的顾虑，很多客户初期都有类似想法。”'},
+        {t:'测试 (Test) · 探寻真实意图', d:'试探异议是否为核心障碍，锁定关键决策因素。', say:'“如果我们能妥善解决这个问题，您觉得距离达成合作还有哪些关键点需要确认？”'},
+        {t:'解决 (Solve) · 提供针对性方案', d:'结合实际给出解决方案，用专业数据和方案回应，消除客户最后顾虑。', say:'“针对成本问题，我们可以参考这份投资回报分析……”'}
+      ]},
+    { stage:'STEP 4 · 行动计划与结束', name:'推动销售进程',
+      summary:'一次成功的拜访必须以明确的下一步行动结束——这不仅是对交流的深度总结，更是锁定客户意向、推动销售全流程向前迈进的核心节点。',
+      steps: [
+        {t:'总结共识，锚定需求', d:'再次确认双方在本次交流中达成的核心共识，复述客户的关键痛点与核心诉求，确保信息传递无偏差，让客户感受到需求被精准捕捉与重视。'},
+        {t:'明确行动，锁定节点', d:'提出具体、可落地的下一步行动计划，明确执行主体、关键动作与具体时间节点（如“下周三前安排技术专家对接”），拒绝模糊表述，让进程可控可追溯。'},
+        {t:'确认承诺，闭环收尾', d:'获得客户对下一步行动的明确口头或书面承诺，同时真诚感谢客户的时间投入，重申合作能为其创造的核心价值，强化合作意愿。'}
+      ],
+      say:'实战话术：“非常感谢您的分享。为深入探讨方案适配性，我建议下周三前安排技术专家与您团队做线上交流，针对您的业务痛点做详细拆解，您看这个安排可行吗？”'}
+  ],
+  tool: {
+    name: '《长松商机管理评估表》',
+    desc: '告别模糊的机会判断，量化诊断商机健康度，科学把控销售流程中的每一个关键节点，让商机转化有迹可循、有据可依。',
+    items: [
+      {t:'01. 锁定核心：确认客户的采购动机', d:'深入挖掘客户不得不采取行动的核心原因，明确问题不解决将对企业运营、业绩目标或个人职责产生的负面影响，判断客户是否具备强烈的变革紧迫感。'},
+      {t:'02. 价值传递：影响关键决策人的认知', d:'清晰掌握关键决策人对我们方案的价值感知，对标竞争对手，梳理我们的独特优势与差异化价值点，确保该价值被决策层充分理解和认可。'},
+      {t:'03. 收益匹配：锚定客户的期望收益', d:'精准对接客户对产品与解决方案的核心诉求，验证我们的方案能否切实解决其痛点，带来可量化、可感知的商业收益，确保方案与客户期望高度契合。'},
+      {t:'04. 主张共识：确立整体方案的价值主张', d:'构建让客户满意的整体价值主张体系，整合产品、服务、售后等全维度价值，形成统一且有说服力的解决方案叙事，促成客户与我们在价值层面达成共识。'}
+    ]
+  },
+  demo: {
+    title: '实战案例演示：场外合作 18.32万',
+    client: '客户背景：某食品公司，100多人，年产值1个亿，老板技术出身、不愁订单，做了15年。',
+    cols: [
+      {t:'现状问题', items:['企业订单很多，生产跟不上','团队人员招聘不进来','老员工没有积极性','二代不愿意接班','高管要求离职']},
+      {t:'问题影响', items:['内部管理缺少方法，客户交期延误','老板年龄70岁，身体不佳','今年7月要解决这个问题','利润无法保障','老顾客流失','无法传承']},
+      {t:'期望价值', items:['激活老员工、效率增加','建立标准化管理，企业可以传承、解放老板','我们服务了18万家客户','大平台']},
+      {t:'竞争与阻碍', items:['高薪聘请过一个高管，2个月离职','找过咨询公司，做了三个月、人员流水','计划再请专业咨询公司','员工思想不统一，抵触不执行','老板没有时间全程参与','没有合适的人力资源','家族型企业，高管反对']}
+    ]
+  },
+  summary: {
+    recap: [
+      {t:'底层基石：信任与需求洞察', d:'以建立信任和长期合作为核心，掌握“钻石模型”与“动因铁三角”，精准捕捉客户深层隐性需求，而非仅关注表面诉求。'},
+      {t:'过程掌控：节奏与异议化解', d:'熟练运用“开场三件事”定调，通过“探、定、影、达”四步法把控全流程；以专业话术处理异议，用明确计划推动销售进程落地。'},
+      {t:'科学管理：商机评估工具赋能', d:'善用标准化商机评估工具，对销售机会进行客观诊断与分级，规避主观判断偏差，提升赢单率。'}
+    ],
+    actions: [
+      'STEP 1 实战拜访演练：选取当前跟进的真实客户，严格按照“开场三件事”破冰，运用“探、定、影、达”四步法完成一次完整的模拟或真实拜访，重点关注需求挖掘环节的节奏把控。',
+      'STEP 2 商机诊断与规划：拜访结束后，使用《长松商机管理评估表》对该客户商机进行全面复盘诊断，识别关键卡点，并基于诊断结果制定清晰、可执行的下一步跟进行动计划。'
+    ],
+    motto: '销售的本质是价值传递，将专业知识转化为客户可感知的解决方案，方能实现共赢。'
+  }
+};
+
+if (typeof module !== "undefined" && module.exports) { module.exports = SEED_CONSULT; }
+
+</script>
+<script>
+/* ============================================================
+   长松咨询 · 案例大数据系统 — 老板金句库种子
+   来源：两批走访案例文档中的客户原话（逐字保留），no = 关联案例编号
+   另外系统会动态合并案例详情里「老板金句/原话」字段的新增内容
+   ============================================================ */
+var SEED_QUOTES = [
+  {no:158, company:"客户案例", theme:"变革决心", quote:"方向对了，哪怕像乌龟一样慢一点，也比兔子跑错方向强。"},
+  {no:157, company:"客户案例", theme:"借力系统", quote:"你不借助人家好的东西，不站在人家肩膀上面，你是从头到尾你去干，那你累死了。管理也是一样的，人家好的经验你拿来用，管理就上台阶了。"},
+  {no:157, company:"客户案例", theme:"思想统一", quote:"不能就派几个人去外面听听，效果不好。要把中层管理层整个拉通，思想统一了，你推什么东西大家就很容易，顺理成章地往下推。"},
+  {no:157, company:"客户案例", theme:"借力系统", quote:"专业的人干专业事，外来和尚好念经，老师来给你讲，大家一起听，效果完全不一样。"},
+  {no:171, company:"客户案例", theme:"解放老板", quote:"长松最直接的价值，是把我从日常事务中解放了出来。以前每天6点多到公司处理业务，现在可以睡到8点再过来。这才是老板真正应该有的状态。"},
+  {no:172, company:"客户案例", theme:"借力系统", quote:"老板不方便说的话，老师可以说。"},
+  {no:172, company:"客户案例", theme:"变革决心", quote:"如果你的企业正面临部门协同不畅、增长乏力，别硬扛，走进长松了解组织系统。我自己就是最好的证明——这笔投入，物超所值。"},
+  {no:173, company:"客户案例", theme:"思想统一", quote:"长松最核心的价值，是解决了人的思想问题。以前老一辈觉得变革有风险，现在整体接受度明显提升，推动工作时阻力小太多了。"},
+  {no:174, company:"客户案例", theme:"组织价值", quote:"组织强，企业才强。"},
+  {no:175, company:"客户案例", theme:"长期主义", quote:"组织建设不是一蹴而就，是长期动态迭代。只要正视问题、坚定变革，跟专业咨询团队一起干，系统化管理一定给企业带来长远价值。"},
+  {no:176, company:"客户案例", theme:"落地实效", quote:"长松不是讲空理论，是真能落地。专业的事交给专业的人，老板亲自参与、团队共学共建，长期看绝对物超所值！"},
+  {no:179, company:"客户案例", theme:"变革决心", quote:"企业到了一定阶段，专业的事交给专业的人，少走弯路、少付代价。长松咨询，靠谱、落地、值得托付！"},
+  {no:181, company:"客户案例", theme:"客户痛点", quote:"团队以前就像护住狗盆的狗，各部门只顾自己利益，协同几乎为零。"},
+  {no:181, company:"客户案例", theme:"选型对比", quote:"对比了七八家咨询公司，最终选长松，因为他们自己内部团队分工、分钱就做得很好，做到了才能教别人。"},
+  {no:183, company:"客户案例", theme:"投入产出", quote:"专业辅导虽然费用不低，但真的能大幅降低试错成本，尤其是非人力资源出身的创始人，非常值得。"},
+  {no:184, company:"客户案例", theme:"投入产出", quote:"辅导不是花钱，是未雨绸缪！百万投入换数倍增长，比砸广告更值！"},
+  {no:185, company:"客户案例", theme:"变革决心", quote:"从怕抵触、求稳定，到敢变革、盯目标——机制比暂时安稳更重要。"},
+  {no:187, company:"客户案例", theme:"系统创富", quote:"过去信“勤劳致富”，现在信“系统创富”。真正的财富来自制度设计与人才激活，而不是一个人埋头苦干。"},
+  {no:187, company:"客户案例", theme:"解放老板", quote:"终于可以九点多到岗，思考战略和人生。"},
+  {no:190, company:"客户案例", theme:"变革决心", quote:"企业主得先“相信”，才能“看见”。别等走完弯路再后悔。"},
+  {no:191, company:"客户案例", theme:"认知升级", quote:"越成长越发现自己无知，老板觉醒，企业才有希望。"},
+  {no:191, company:"客户案例", theme:"管理本质", quote:"管理的本质是修心，制度再全，不如老板真、员工信。"},
+  {no:192, company:"客户案例", theme:"长期主义", quote:"博仕人，长松人，永远一家人。这不是口号，是我们用15年走出来的路。"},
+  {no:194, company:"客户案例", theme:"教练陪伴", quote:"学习的过程分三步：听课、用起来、真正落地。最难的是怎么用？你想学开车，光看理论行吗？不行。经营企业也一样，你得有教练。"},
+  {no:194, company:"客户案例", theme:"教练陪伴", quote:"长松的老师不是讲台上的专家，而是并肩作战的伙伴与教练：他们从不急着给答案，而是问我们——你觉得客户最怕什么？你觉得员工为什么不愿意干？"},
+  {no:195, company:"客户案例", theme:"教练陪伴", quote:"上课解决的是激情，老师入企解决的是实际问题。上课是“设计方案”，老师是“盖房的地基、梁、墙”。"},
+  {no:195, company:"客户案例", theme:"变革决心", quote:"顺风顺水时不需要老师，真正需要时，是你已经卡住了。企业成长必须有“培训预算”，贵不是问题，问题是“不行动”。"},
+  {no:195, company:"客户案例", theme:"长期主义", quote:"选定了，就相信它。"}
+];
+
+if (typeof module !== "undefined" && module.exports) { module.exports = SEED_QUOTES; }
+
+</script>
+<script>var EMBEDDED_PHOTOS = {};</script>
+<script>
+/* ============================================================
+   长松咨询 · 案例大数据系统 主程序
+   ============================================================ */
+const LS_CASES = 'cs_cases_v1';
+const LS_KB = 'cs_kb_v1';
+const LS_TODO = 'cs_todo_v1';
+
+const PAIN_CANON = ['组织架构混乱','绩效考核流于形式','薪酬体系缺失','目标管理缺失','团队积极性低','人才梯队断层','经验管理依赖','财务糊涂账','部门协同差','老板亲力亲为','二代接班传承','管理基础薄弱','成本利润压力','回款现金流紧张','文化思想不统一','会议决策低效','战略方向模糊','营销乏力','人才能力不足','变革阻力大','发展瓶颈/管理压力大'];
+const SOL_CANON = ['组织架构梳理','薪酬体系设计','绩效考核落地','目标管理闭环','人才招聘培养','经营分析会·盯盘','财务体系规范','战略规划·聚焦','利润经营·独立核算','流程标准化·手册','营销体系搭建','认知升级·系统教育','股权激励·分红','激励机制设计','数据化·数字化','团队协同·责任下沉','会议系统','企业文化·学习型组织','接班人培养'];
+const MOD_CANON = ['组织系统','薪酬绩效','财务系统','利润经营','股权激励','营销系统','文化系统','目标管理','人才系统','战略咨询'];
+
+// 标签规范化（录入时自动归一）
+const PAIN_SYN = {
+  '架构乱':'组织架构混乱','架构混乱':'组织架构混乱','职责不清':'组织架构混乱','权责不清':'组织架构混乱','一人多岗':'组织架构混乱','部门墙':'部门协同差','内耗':'部门协同差','推诿':'部门协同差',
+  '绩效流于形式':'绩效考核流于形式','考核走过场':'绩效考核流于形式','大锅饭':'薪酬体系缺失','薪酬不合理':'薪酬体系缺失','没标准':'管理基础薄弱',
+  '凭感觉':'经验管理依赖','经验管理':'经验管理依赖','拍脑袋':'经验管理依赖','人治':'经验管理依赖',
+  '老板累':'老板亲力亲为','老板太累':'老板亲力亲为','救火队长':'老板亲力亲为','不放权':'老板亲力亲为',
+  '招人难':'人才梯队断层','留人难':'人才梯队断层','人才断层':'人才梯队断层','没人带':'人才梯队断层',
+  '账目不清':'财务糊涂账','糊涂账':'财务糊涂账','财务乱':'财务糊涂账','没核算':'财务糊涂账','业财脱节':'财务糊涂账',
+  '二代接班':'二代接班传承','接班':'二代接班传承','传承':'二代接班传承',
+  '利润薄':'成本利润压力','利润低':'成本利润压力','成本高':'成本利润压力','降本':'成本利润压力',
+  '回款难':'回款现金流紧张','现金流紧张':'回款现金流紧张',
+  '团队不同频':'文化思想不统一','思想不统一':'文化思想不统一','认知断层':'文化思想不统一',
+  '开会没效果':'会议决策低效','会议低效':'会议决策低效','决策靠感觉':'经验管理依赖',
+  '没战略':'战略方向模糊','方向不清':'战略方向模糊','业务太杂':'战略方向模糊',
+  '销售弱':'营销乏力','没销售':'营销乏力','拓客难':'营销乏力','老客户依赖':'营销乏力',
+  '干部能力弱':'人才能力不足','管理层不专业':'人才能力不足','技术转管理':'人才能力不足',
+  '员工抵触':'变革阻力大','团队抗拒':'变革阻力大','不接受新事物':'变革阻力大',
+  '没制度':'管理基础薄弱','制度缺失':'管理基础薄弱','流程乱':'管理基础薄弱','游击队':'管理基础薄弱','草台班子':'管理基础薄弱','小作坊':'管理基础薄弱'
+};
+const SOL_SYN = {
+  '架构梳理':'组织架构梳理','组织架构':'组织架构梳理','架构重组':'组织架构梳理','部门职责':'组织架构梳理','岗位职责':'组织架构梳理','工作分析':'组织架构梳理','定岗定编':'组织架构梳理',
+  '薪酬':'薪酬体系设计','五级薪酬':'薪酬体系设计','七级薪酬':'薪酬体系设计','九级薪酬':'薪酬体系设计','薪晋考':'薪酬体系设计','定薪':'薪酬体系设计',
+  '绩效':'绩效考核落地','KPI':'绩效考核落地','考核':'绩效考核落地','绩效面谈':'绩效考核落地',
+  '目标责任书':'目标管理闭环','目标分解':'目标管理闭环','OKR':'目标管理闭环','三级目标':'目标管理闭环','周计划':'目标管理闭环',
+  '经营分析会':'经营分析会·盯盘','盯盘':'经营分析会·盯盘','复盘':'经营分析会·盯盘','数据晾晒':'经营分析会·盯盘',
+  '财务':'财务体系规范','核算账':'财务体系规范','预算':'财务体系规范','业财':'财务体系规范','报表':'财务体系规范',
+  '阿米巴':'利润经营·独立核算','独立核算':'利润经营·独立核算','利润经营':'利润经营·独立核算','小组织核算':'利润经营·独立核算','降本':'利润经营·独立核算',
+  '股权':'股权激励·分红','分红':'股权激励·分红','合伙人':'股权激励·分红',
+  '营销':'营销体系搭建','客户分级':'营销体系搭建','招商':'营销体系搭建','销售手册':'营销体系搭建','爆品':'营销体系搭建',
+  '招聘':'人才招聘培养','人才盘点':'人才招聘培养','人才画像':'人才招聘培养','晋升':'人才招聘培养','测评':'人才招聘培养','培训':'人才招聘培养','育人':'人才招聘培养',
+  '文化':'企业文化·学习型组织','读书会':'企业文化·学习型组织','价值观':'企业文化·学习型组织','学习型':'企业文化·学习型组织',
+  '会议系统':'会议系统','质询会':'会议系统','例会':'会议系统',
+  '战略':'战略规划·聚焦','三年规划':'战略规划·聚焦','单店盈利':'战略规划·聚焦','投资回报':'战略规划·聚焦','聚焦':'战略规划·聚焦',
+  '流程':'流程标准化·手册','手册':'流程标准化·手册','制度':'流程标准化·手册','标准':'流程标准化·手册','SOP':'流程标准化·手册',
+  '提成':'激励机制设计','PK':'激励机制设计','对赌':'激励机制设计','公海池':'激励机制设计','奖励':'激励机制设计','激励':'激励机制设计',
+  '数据':'数据化·数字化','数字化':'数据化·数字化','看板':'数据化·数字化','ERP':'数据化·数字化',
+  '责任下沉':'团队协同·责任下沉','授权':'团队协同·责任下沉','协同':'团队协同·责任下沉','利益绑定':'团队协同·责任下沉','利益链':'团队协同·责任下沉',
+  '课程':'认知升级·系统教育','辅导':'认知升级·系统教育','培训':'认知升级·系统教育','操盘手':'认知升级·系统教育','认知':'认知升级·系统教育','工具包':'认知升级·系统教育',
+  '接班':'接班人培养','传承':'接班人培养'
+};
+function normPain(t){ return normTag(t, PAIN_CANON, PAIN_SYN); }
+function normSol(t){ return normTag(t, SOL_CANON, SOL_SYN); }
+function normTag(t, canon, syn){
+  t = String(t||'').trim();
+  if(!t) return '';
+  if(canon.includes(t)) return t;
+  if(syn[t]) return syn[t];
+  // 包含式匹配
+  for(const k in syn){
+    if(t.indexOf(k) >= 0) return syn[k];
+  }
+  return t; // 保留自定义标签
+}
+
+/* ---------- 数据层 ---------- */
+let state = { cases: [], kb: [], todos: [] };
+let currentCaseId = null;
+let editingCaseId = null;
+let editingKbId = null;
+
+function load(){
+  try{ state.cases = JSON.parse(localStorage.getItem(LS_CASES)); }catch(e){}
+  try{ state.kb = JSON.parse(localStorage.getItem(LS_KB)); }catch(e){}
+  try{ state.todos = JSON.parse(localStorage.getItem(LS_TODO)); }catch(e){}
+  if(!Array.isArray(state.cases) || !state.cases.length){ state.cases = (typeof SEED_CASES !== 'undefined') ? JSON.parse(JSON.stringify(SEED_CASES)) : []; }
+  if(!Array.isArray(state.kb) || !state.kb.length){ state.kb = (typeof SEED_KB !== 'undefined') ? JSON.parse(JSON.stringify(SEED_KB)) : []; }
+  if(!Array.isArray(state.todos)) state.todos = defaultTodos();
+  save();
+}
+function save(){
+  localStorage.setItem(LS_CASES, JSON.stringify(state.cases));
+  localStorage.setItem(LS_KB, JSON.stringify(state.kb));
+  localStorage.setItem(LS_TODO, JSON.stringify(state.todos));
+}
+function defaultTodos(){
+  return [
+    {text:'吃透「管理基础薄弱」的标准打法：制度汇编 + 流程手册 + 岗位标准，做出你的第一套模板', done:false},
+    {text:'整理「组织架构梳理」的调研清单与架构图模板（一企一策）', done:false},
+    {text:'总结「薪酬体系设计」五级/七级/九级薪酬的适用场景与切换话术', done:false},
+    {text:'收集 2-3 个餐饮/连锁行业的山西案例，补足行业短板', done:false}
+  ];
+}
+
+/* ---------- 工具函数 ---------- */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function tags(t){ return esc(t).split(',').filter(Boolean); }
+function tagHtml(arr, cls){ return (arr||[]).map(t=>`<span class="tag ${cls||''}">${esc(t)}</span>`).join(''); }
+function tagCounts(list, field){ const m={}; list.forEach(c=>{ let v=c[field]; if(v==null) return; const arr=Array.isArray(v)?v:[v]; arr.forEach(t=>{ if(t) m[t]=(m[t]||0)+1; }); }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); }
+function distinct(list, field){ const s=new Set(); list.forEach(c=>{ if(c[field]) s.add(c[field]); }); return [...s].sort(); }
+function barHtml(items, opts){
+  opts = opts||{};
+  const max = opts.max || (items.length?items[0][1]:1);
+  const labW = opts.labW || 150;
+  const total = items.reduce((a,x)=>a+x[1],0);
+  return items.map(([k,v],i)=>{
+    const pct = Math.round(v/max*100);
+    const share = total? Math.round(v/total*100):0;
+    const barColor = opts.color || (i===0 ? 'linear-gradient(90deg,#16324f,#2f6fb3)' : 'linear-gradient(90deg,#1e4266,#c8a45a)');
+    return `<div class="bar-row">
+      <div class="bar-lab" style="width:${labW}px" title="${esc(k)}">${esc(k)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor}">${v>0?`${v}`:''}</div></div>
+      <div class="bar-num"><b>${v}</b>${share?`<span class="muted">(${share}%)</span>`:''}</div>
+    </div>`;
+  }).join('');
+}
+function fillSelect(el, values, current){
+  const allLabel = (el.dataset && el.dataset.all) ? el.dataset.all : '全部';
+  el.innerHTML = '<option value="">' + allLabel + '</option>' + values.map(v=>`<option value="${esc(v)}" ${v===current?'selected':''}>${esc(v)}</option>`).join('');
+}
+
+/* ---------- 视图切换 ---------- */
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active', b.dataset.v===name));
+  if(name==='overview') renderOverview();
+  if(name==='radar') renderRadar();
+  if(name==='library') renderLibrary();
+  if(name==='priority') renderPriority();
+  if(name==='calendar') renderCalendar();
+  if(name==='quotes') renderQuotes();
+  if(name==='kb') renderKb();
+  if(name==='learning') renderLearning();
+  if(name==='data') renderData();
+}
+document.getElementById('nav').addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(b) switchView(b.dataset.v);
+});
+
+/* ============================================================
+   总览
+   ============================================================ */
+function renderOverview(){
+  const cs = state.cases;
+  const provs = new Set(cs.map(c=>c.prov).filter(Boolean));
+  const inds = new Set(cs.map(c=>c.ind).filter(Boolean));
+  const svc = cs.filter(c=>c.type!=='走访案例').length;
+  const visits = cs.length - svc;
+  document.getElementById('hs-cases').textContent = cs.length;
+  document.getElementById('hs-problem').textContent = PAIN_CANON.length;
+  document.getElementById('hs-industry').textContent = inds.size;
+  document.getElementById('hs-prov').textContent = provs.size;
+
+  document.getElementById('ov-metrics').innerHTML = [
+    ['案例总数', cs.length, '其中 服务案例 '+svc+' / 走访 '+visits],
+    ['覆盖省市', provs.size+' 个', '陕西·山西·山东·江苏·浙江…'],
+    ['覆盖行业', inds.size+' 个', '制造·餐饮·商贸·医疗·物流…'],
+    ['标准问题', PAIN_CANON.length+' 类', '见问题雷达，命中 '+(new Set(cs.flatMap(c=>c.pain||[]))).size+' 类']
+  ].map(([n,l,s])=>`<div class="metric"><div class="num">${n}</div><div class="lab">${l}</div><div class="sub">${s}</div></div>`).join('');
+
+  const pains = tagCounts(cs, 'pain').slice(0,10);
+  document.getElementById('ov-pain-bars').innerHTML = barHtml(pains, {labW:130}) || '<div class="empty">暂无数据</div>';
+
+  const sols = tagCounts(cs, 'sol').slice(0,10);
+  document.getElementById('ov-sol-bars').innerHTML = barHtml(sols, {labW:130, color:'linear-gradient(90deg,#a9843f,#c8a45a)'}) || '<div class="empty">暂无数据</div>';
+
+  const provs2 = tagCounts(cs.map(c=>({prov:c.prov})).filter(c=>c.prov), 'prov');
+  document.getElementById('ov-prov-bars').innerHTML = barHtml(provs2.map(([k,v])=>[k,v]), {labW:90}) || '<div class="empty">暂无数据</div>';
+
+  const inds2 = tagCounts(cs.map(c=>({ind:c.ind})).filter(c=>c.ind), 'ind').slice(0,12);
+  document.getElementById('ov-ind-bars').innerHTML = barHtml(inds2.map(([k,v])=>[k,v]), {labW:130}) || '<div class="empty">暂无数据</div>';
+
+  const mods = tagCounts(cs, 'mod').slice(0,12);
+  document.getElementById('ov-mod-bars').innerHTML = barHtml(mods, {labW:120}) || '<div class="empty">暂无数据</div>';
+}
+
+/* ============================================================
+   问题雷达
+   ============================================================ */
+function renderRadar(){
+  const cs = state.cases;
+  fillSelect(document.getElementById('rd-prov'), distinct(cs,'prov'), '');
+  fillSelect(document.getElementById('rd-ind'), distinct(cs,'ind'), '');
+  const pv = document.getElementById('rd-prov').value;
+  const iv = document.getElementById('rd-ind').value;
+  const tv = document.getElementById('rd-type').value;
+  let scope = cs;
+  if(pv) scope = scope.filter(c=>c.prov===pv);
+  if(iv) scope = scope.filter(c=>c.ind===iv);
+  if(tv) scope = scope.filter(c=>c.type===tv);
+  document.getElementById('rd-scope').innerHTML =
+    `当前统计范围：共 <b>${scope.length}</b> 个案例` +
+    (pv?` · 地区=${pv}`:'') + (iv?` · 行业=${iv}`:'') + (tv?` · 类型=${tv}`:'') +
+    `。命中问题 <b>${new Set(scope.flatMap(c=>c.pain||[])).size}</b> 类。`;
+
+  const pains = tagCounts(scope, 'pain');
+  document.getElementById('rd-bars').innerHTML = barHtml(pains, {labW:160}) || '<div class="empty">该范围内暂无案例</div>';
+
+  // 共现分析
+  const pairMap = {};
+  scope.forEach(c=>{
+    const p = c.pain||[];
+    for(let i=0;i<p.length;i++) for(let j=i+1;j<p.length;j++){
+      const key = p[i] < p[j] ? p[i]+'|'+p[j] : p[j]+'|'+p[i];
+      pairMap[key] = (pairMap[key]||0)+1;
+    }
+  });
+  const pairs = Object.entries(pairMap).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  document.getElementById('rd-pairs').innerHTML = pairs.length ? pairs.map(([k,v])=>{
+    const [a,b] = k.split('|');
+    return `<div class="bar-row"><div class="bar-lab" style="width:200px">${esc(a)} ＋ ${esc(b)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/pairs[0][1]*100)}%;background:linear-gradient(90deg,#7a5fb0,#c8a45a)">${v}</div></div>
+      <div class="bar-num"><b>${v}</b></div></div>`;
+  }).join('') : '<div class="empty">该范围内暂无共现数据</div>';
+}
+
+/* ============================================================
+   案例库
+   ============================================================ */
+function renderLibrary(){
+  const cs = state.cases;
+  fillSelect(document.getElementById('lb-prov'), distinct(cs,'prov'), '');
+  fillSelect(document.getElementById('lb-ind'), distinct(cs,'ind'), '');
+  const painOpts = PAIN_CANON.map(p=>[p, tagCounts(cs,'pain').find(x=>x[0]===p)?.[1]||0]);
+  document.getElementById('lb-pain').innerHTML = '<option value="">全部问题</option>' + painOpts.map(([p,n])=>`<option>${esc(p)} (${n})</option>`).join('');
+  const solOpts = SOL_CANON.map(s=>[s, tagCounts(cs,'sol').find(x=>x[0]===s)?.[1]||0]);
+  document.getElementById('lb-sol').innerHTML = '<option value="">全部方案</option>' + solOpts.map(([s,n])=>`<option>${esc(s)} (${n})</option>`).join('');
+
+  const q = document.getElementById('lb-search').value.trim().toLowerCase();
+  const pv = document.getElementById('lb-prov').value;
+  const iv = document.getElementById('lb-ind').value;
+  const painF = document.getElementById('lb-pain').value.split(' (')[0];
+  const solF = document.getElementById('lb-sol').value.split(' (')[0];
+  const tv = document.getElementById('lb-type').value;
+
+  let list = cs.slice().sort((a,b)=>b.no-a.no);
+  if(q) list = list.filter(c=>{
+    const v = c.visit||{};
+    const hay = [c.c,c.city,c.prov,c.ind,c.res,c.t,c.summary,c.quote,
+      v.f_painMain,v.f_painImpact,v.f_painCause,v.f_expect,v.f_budget,v.f_contact,v.f_moreQ,v.f_goal35,v.f_boss]
+      .join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+  if(pv) list = list.filter(c=>c.prov===pv);
+  if(iv) list = list.filter(c=>c.ind===iv);
+  if(painF) list = list.filter(c=>(c.pain||[]).includes(painF));
+  if(solF) list = list.filter(c=>(c.sol||[]).includes(solF));
+  if(tv) list = list.filter(c=>c.type===tv);
+
+  document.getElementById('lb-count').textContent = `共 ${list.length} 条 / 全部 ${cs.length} 条`;
+
+  document.getElementById('lb-list').innerHTML = list.map(c=>`
+    <div class="case-card" onclick="openDetail('${c.id||('c'+c.no)}')">
+      <div class="c-top">
+        <span class="c-name">${esc(c.c)||'(未命名企业)'}</span>
+        ${getPhotos(c.no).length?`<span class="ph-badge">📷 ${getPhotos(c.no).length}</span>`:''}
+        <span class="c-no">#${c.no}</span>
+      </div>
+      <div class="c-meta">
+        ${esc(c.city||'')}${c.city&&c.prov?' · ':''}${esc(c.prov||'')}
+        ${(c.city||c.prov)?' · ':''}${esc(c.ind||'行业未填')}
+        ${c.year?(' · '+c.year):''} · <span class="tag mod">${esc(c.type||'服务案例')}</span>
+      </div>
+      ${c.res?`<div class="c-res">${esc(c.res)}</div>`:''}
+      <div class="c-tags">
+        ${tagHtml(c.mod, 'mod')}
+        ${tagHtml(c.pain, 'pain')}
+        ${tagHtml(c.sol, 'sol')}
+      </div>
+    </div>`).join('') || '<div class="empty">没有符合条件的案例。换个筛选条件，或点击右上角"新增案例"。</div>';
+}
+
+/* ---------- 详情 / 编辑 / 删除 ---------- */
+function findCase(id){
+  return state.cases.find(c=>(c.id||('c'+c.no))===id);
+}
+function openDetail(id){
+  const c = findCase(id);
+  if(!c) return;
+  currentCaseId = id;
+  document.getElementById('dt-title').textContent = '案例详情 · ' + (c.c||'未命名企业');
+  document.getElementById('dt-body').innerHTML = `
+    <div class="kv"><div class="k">编号</div><div class="v">#${c.no}（${esc(c.type||'服务案例')}）</div></div>
+    <div class="kv"><div class="k">企业</div><div class="v"><b>${esc(c.c)||'-'}</b></div></div>
+    <div class="kv"><div class="k">地区</div><div class="v">${esc(c.city||'-')} ${esc(c.prov||'')}</div></div>
+    <div class="kv"><div class="k">行业</div><div class="v">${esc(c.ind||'-')}</div></div>
+    <div class="kv"><div class="k">年份</div><div class="v">${c.year?c.year:'-'}</div></div>
+    ${c.t?`<div class="kv"><div class="k">辅导老师</div><div class="v">${esc(c.t)}</div></div>`:''}
+    ${c.scale?`<div class="kv"><div class="k">规模</div><div class="v">${esc(c.scale)}</div></div>`:''}
+    <div class="sec">合作模块</div>${tagHtml(c.mod,'mod')||'<span class="muted">-</span>'}
+    <div class="sec">企业痛点（问题标签）</div>${tagHtml(c.pain,'pain')||'<span class="muted">-</span>'}
+    <div class="sec">长松解法（方案标签）</div>${tagHtml(c.sol,'sol')||'<span class="muted">-</span>'}
+    <div class="sec">成果 / 变化</div><p>${esc(c.res)||'-'}</p>
+    ${c.summary?`<div class="sec">备注 / 详情摘要</div><p>${esc(c.summary)}</p>`:''}
+    ${c.quote?`<div class="sec">老板金句 / 原话</div><div class="quote">${esc(c.quote)}</div>`:''}
+    ${visitHtml(c)}
+    ${photosHtml(c)}
+    ${simHtml(c)}
+  `;
+  openModal('detail-mask');
+}
+function editCurrentCase(){ openCaseForm(findCase(currentCaseId)); }
+function deleteCurrentCase(){
+  if(!confirm('确定删除该案例？此操作不可恢复。')) return;
+  const id = currentCaseId;
+  state.cases = state.cases.filter(c=>(c.id||('c'+c.no))!==id);
+  save(); closeModal('detail-mask'); renderLibrary(); refreshAll();
+}
+
+function openCaseForm(c){
+  editingCaseId = c ? (c.id||('c'+c.no)) : null;
+  document.getElementById('fm-title').textContent = c ? '编辑案例' : '新增案例';
+  const f = c || {no:nextNo(), c:'', city:'', prov:'', ind:'', year:new Date().getFullYear(), type:'服务案例', mod:[], pain:[], sol:[], res:'', summary:'', quote:'', t:'', scale:''};
+  const v = (c && c.visit) ? c.visit : emptyVisit();
+  const filled = visitFilledCount(c && c.visit ? c.visit : null);
+  document.getElementById('fm-body').innerHTML = `
+    <div class="ftabs">
+      <button id="tab-basic" class="on" onclick="fmTab('basic')">① 案例基本信息</button>
+      <button id="tab-visit" onclick="fmTab('visit')">② 拜访诊断单<span class="muted">（${filled}/${VISIT_TOTAL}）</span></button>
+    </div>
+    <div id="pane-basic">
+    <div class="form-row">
+      <div><label class="fl">企业名称 *</label><input type="text" id="f-c" value="${esc(f.c)}" placeholder="如：太原XX商贸有限公司"></div>
+      <div><label class="fl">案例编号</label><input type="number" id="f-no" value="${f.no}"></div>
+    </div>
+    <div class="form-row">
+      <div><label class="fl">城市</label><input type="text" id="f-city" value="${esc(f.city)}" placeholder="如：太原"></div>
+      <div><label class="fl">省份</label><input type="text" id="f-prov" value="${esc(f.prov)}" placeholder="如：山西"></div>
+    </div>
+    <div class="form-row">
+      <div><label class="fl">行业</label><input type="text" id="f-ind" value="${esc(f.ind)}" placeholder="如：餐饮连锁 / 机械制造"></div>
+      <div><label class="fl">年份</label><input type="number" id="f-year" value="${f.year||''}" placeholder="合作/走访年份"></div>
+    </div>
+    <div class="form-row">
+      <div><label class="fl">类型</label>
+        <select id="f-type">
+          <option value="服务案例" ${f.type==='服务案例'?'selected':''}>服务案例（已合作/辅导）</option>
+          <option value="走访案例" ${f.type==='走访案例'?'selected':''}>走访案例（拜访/开发中）</option>
+        </select>
+      </div>
+      <div><label class="fl">辅导老师 / 对接人</label><input type="text" id="f-t" value="${esc(f.t)}" placeholder="如：王老师"></div>
+    </div>
+    <label class="fl">合作模块（可多选）</label>
+    <div class="chipbox" id="f-mod"></div>
+    <label class="fl">企业痛点 / 问题（从标准标签选，可自定义输入）</label>
+    <div class="chipbox" id="f-pain"></div>
+    <div class="flex mt8"><input type="text" id="f-pain-new" placeholder="输入自定义问题，回车添加"><button class="btn ghost sm" onclick="addChip('pain')">添加</button></div>
+    <label class="fl">长松解法 / 方案（从标准标签选，可自定义输入）</label>
+    <div class="chipbox" id="f-sol"></div>
+    <div class="flex mt8"><input type="text" id="f-sol-new" placeholder="输入自定义方案，回车添加"><button class="btn ghost sm" onclick="addChip('sol')">添加</button></div>
+    <label class="fl">成果 / 变化（业绩、管理、团队等具体数据）</label>
+    <textarea id="f-res" placeholder="如：业绩增长40%，回款率提升7个百分点…">${esc(f.res||'')}</textarea>
+    <label class="fl">备注 / 详情摘要</label>
+    <textarea id="f-summary" placeholder="补充案例背景、过程、启发…">${esc(f.summary||'')}</textarea>
+    <label class="fl">老板金句 / 原话（拜访记录时可摘录）</label>
+    <textarea id="f-quote" placeholder="老板的原话，最能打动下一个客户">${esc(f.quote||'')}</textarea>
+    </div>
+    <div id="pane-visit" style="display:none">
+      <div class="warn">按《拜访客户记录表-202604版》嵌入，全部选填：现场来不及就先记痛点组和打分，回公司再补。顺序即提问动线。</div>
+      <label class="fl">拜访时间 *</label>
+      <input type="date" id="vf-f_date" value="${esc(v.f_date||new Date().toISOString().slice(0,10))}">
+      ${renderVisitFields(v)}
+    </div>
+  `;
+  renderChips('mod', f.mod||[], MOD_CANON);
+  renderChips('pain', f.pain||[], PAIN_CANON);
+  renderChips('sol', f.sol||[], SOL_CANON);
+  openModal('form-mask');
+}
+function fmTab(which){
+  const b = which==='basic';
+  document.getElementById('tab-basic').classList.toggle('on', b);
+  document.getElementById('tab-visit').classList.toggle('on', !b);
+  document.getElementById('pane-basic').style.display = b?'':'none';
+  document.getElementById('pane-visit').style.display = b?'none':'';
+}
+function nextNo(){
+  return state.cases.reduce((m,c)=>Math.max(m, c.no||0), 0) + 1;
+}
+function renderChips(field, selected, canon){
+  const el = document.getElementById('f-'+field);
+  const sel = new Set(selected);
+  el.innerHTML = canon.map(t=>`<span class="chip ${sel.has(t)?'on':''}" onclick="toggleChip('${field}','${t.replace(/'/g,"\\'")}')">${esc(t)}</span>`).join('');
+}
+function toggleChip(field, t){
+  const sel = currentChips(field);
+  const i = sel.indexOf(t);
+  if(i>=0) sel.splice(i,1); else sel.push(t);
+  renderChips(field, sel, field==='mod'?MOD_CANON:field==='pain'?PAIN_CANON:SOL_CANON);
+}
+function currentChips(field){
+  const el = document.getElementById('f-'+field);
+  return [...el.querySelectorAll('.chip.on')].map(x=>x.textContent);
+}
+function addChip(field){
+  const input = document.getElementById('f-'+field+'-new');
+  const t = input.value.trim();
+  if(!t) return;
+  const sel = currentChips(field);
+  const norm = field==='pain'?normPain(t):field==='sol'?normSol(t):t;
+  if(norm && !sel.includes(norm)) sel.push(norm);
+  const canon = field==='mod'?MOD_CANON:field==='pain'?PAIN_CANON:SOL_CANON;
+  renderChips(field, sel, canon);
+  input.value='';
+}
+function saveCaseForm(){
+  const rawNo = parseInt(document.getElementById('f-no').value);
+  let recNo = isNaN(rawNo) ? 0 : rawNo;
+  if(!recNo){
+    if(editingCaseId){
+      const oldc = state.cases.find(c=>(c.id||('c'+c.no))===editingCaseId);
+      recNo = oldc ? oldc.no : nextNo();   // 编辑时保留原编号，避免误改序号
+    }else{
+      recNo = nextNo();
+    }
+  }
+  const data = {
+    no: recNo,
+    c: document.getElementById('f-c').value.trim(),
+    city: document.getElementById('f-city').value.trim(),
+    prov: document.getElementById('f-prov').value.trim(),
+    ind: document.getElementById('f-ind').value.trim(),
+    year: parseInt(document.getElementById('f-year').value)||0,
+    type: document.getElementById('f-type').value,
+    t: document.getElementById('f-t').value.trim(),
+    mod: currentChips('mod').map(normTagGeneric),
+    pain: currentChips('pain').map(normPain).filter(Boolean),
+    sol: currentChips('sol').map(normSol).filter(Boolean),
+    res: document.getElementById('f-res').value.trim(),
+    summary: document.getElementById('f-summary').value.trim(),
+    quote: document.getElementById('f-quote').value.trim(),
+    visit: collectVisit()
+  };
+  if(!data.c){ alert('请填写企业名称'); return; }
+  if(editingCaseId){
+    const idx = state.cases.findIndex(c=>(c.id||('c'+c.no))===editingCaseId);
+    if(idx>=0) state.cases[idx] = {...state.cases[idx], ...data};
+  }else{
+    data.id = 'u'+Date.now();
+    data.createdAt = new Date().toISOString();
+    state.cases.push(data);
+  }
+  save(); closeModal('form-mask'); refreshAll();
+  switchView('library');
+}
+function normTagGeneric(t){ return t; }
+
+/* ---------- 照片挂接 & 相似案例 ---------- */
+var PHOTOS_DATA = (typeof EMBEDDED_PHOTOS !== 'undefined' && Object.keys(EMBEDDED_PHOTOS).length) ? EMBEDDED_PHOTOS : ((typeof SEED_PHOTOS !== 'undefined') ? SEED_PHOTOS : {});
+function getPhotos(no){ return PHOTOS_DATA[String(no)] || []; }
+function photoSrc(f){ return /^data:image/.test(f) ? f : 'photos/' + f; }
+function photosHtml(c){
+  const ph = getPhotos(c.no);
+  if(!ph.length) return '';
+  return `<div class="sec">现场照片（来自原始走访档案）</div>
+    <div class="ph-grid">${ph.map((f,i)=>{
+      const s = photoSrc(f);
+      const img = `<img src="${s}" loading="lazy" alt="案例${c.no}照片${i+1}">`;
+      return /^data:image/.test(f) ? img : `<a href="${s}" target="_blank">${img}</a>`;
+    }).join('')}</div>
+    <p class="fs12 muted mt8">共 ${ph.length} 张${/^data:image/.test(ph[0])?'（单文件版：右键图片可另存原图）':'，点击查看原图'}</p>`;
+}
+function simScore(cur){
+  const curId = cur.id || ('c'+cur.no);
+  const curP = new Set(cur.pain||[]), curS = new Set(cur.sol||[]);
+  return state.cases
+    .filter(x => (x.id||('c'+x.no)) !== curId)
+    .map(x => {
+      const sp = (x.pain||[]).filter(t=>curP.has(t));
+      const ss = (x.sol||[]).filter(t=>curS.has(t));
+      let s = sp.length*3 + ss.length;
+      const sameInd = !!(cur.ind && x.ind && x.ind===cur.ind); if(sameInd) s+=2;
+      const sameProv = !!(cur.prov && x.prov && x.prov===cur.prov); if(sameProv) s+=1;
+      return {x, score:s, sp, ss, sameInd, sameProv};
+    })
+    .filter(v => v.score>=4)
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,6);
+}
+function simHtml(cur){
+  const sims = simScore(cur);
+  if(!sims.length) return '';
+  return `<div class="sec">相似案例参考（拜访/服务前对照）</div>
+    ${sims.map(v=>`
+    <div class="sim-item" onclick="openDetail('${v.x.id||('c'+v.x.no)}')" title="点击查看该案例详情">
+      <div class="flex" style="justify-content:space-between">
+        <b>${esc(v.x.c)}<span class="muted fs12"> #${v.x.no}</span></b>
+        <span class="tag sol">相似度 ${v.score}</span>
+      </div>
+      <div class="fs12 muted">${esc(v.x.ind||'行业未填')} ${v.x.res?('· '+esc(v.x.res.slice(0,60))):''}</div>
+      <div class="mt8">${v.sp.map(t=>`<span class="tag pain">共同：${esc(t)}</span>`).join('')}${v.sameInd?'<span class="tag mod">同行业</span>':''}${v.sameProv?'<span class="tag mod">同省</span>':''}</div>
+    </div>`).join('')}`;
+}
+
+/* ============================================================
+   拜访诊断单（嵌入《拜访客户记录表-202604版》价值营销 SOP）
+   ============================================================ */
+var VISIT_GROUPS = [
+  {name:'一、企业基本情况（基本面速查）', hint:'破冰要素：成立年限、老板性格与专业出身、股东结构、销售额/利润率、组织架构现状——这些决定后面用哪套切入话术。', fields:[
+    ['f_found','成立时间','s'],['f_boss','老板姓名','s'],['f_bossInfo','性别 / 年龄','s'],['f_bossType','性格类型','s'],
+    ['f_bossBg','专业出身','s'],['f_shares','股东结构','l'],['f_shareDiv','股东分工','l'],['f_fin','财务负责人','s'],
+    ['f_revenue','年销售额 / 产值','s'],['f_margin','毛利率 / 净利率','s'],['f_staff','规模人数','s'],['f_org','组织架构现状','l'],
+    ['f_prod','主营产品 / 服务','l'],['f_model','核心业务模式','l'],['f_ratio','产品 / 市场 / 利润占比','l'],
+    ['f_cust','核心客户画像','l'],['f_payterm','结算模式','s'],['f_bizClass','业务分类','s'],['f_status','行业地位','l'],
+    ['f_vscomp','与竞对核心差距','l'],['f_swdot','企业优势 / 劣势','l'],['f_salary','薪资结构现状','l'],
+    ['f_orgMod','已导入的组织系统板块','l'],['f_habit','消费习惯','s'],['f_goal35','3-5 年核心目标','l'],['f_trend','行业机遇与挑战','l']
+  ]},
+  {name:'二、痛点探询（现场提问主线）', hint:'提问顺序：① 经营管理上遇到了什么棘手和头疼的问题？② 这些问题发生多久了？频率？③ 造成了什么影响？④ 您认为缺了什么才导致？\n收口确认：「我理解您面临的问题是因为※※和※※，已经存在＊年，这给您带来了※※的损失，我理解的对吗？（等 YES）」', fields:[
+    ['f_painMain','经营管理最棘手头疼的问题','l'],['f_painDur','问题发生时长、频率','l'],
+    ['f_painImpact','问题造成的核心影响（业务/个人）','l'],['f_painCause','客户认为的问题根源（缺了什么）','l'],
+    ['f_painConfirm','问题理解确认（“我理解您面临…对吗？”）','l']
+  ]},
+  {name:'三、动机铁三角（趋利·避害·时间点）', hint:'动机铁三角＝趋利·避害·时间点。必问：必须解决它的核心原因？最迟什么时候启动/解决？为什么是这个时间？\n再压两个秤砣：「如果什么都不做会发生什么、您会有多大损失？」「如果把这些问题解决，会是一种什么场面？」→ 给重要性/急迫度各打 1-10 分。', fields:[
+    ['f_mustWhy','必须解决该问题的核心原因','l'],
+    ['f_importance','重要性打分（1-10）','num','f_urgency|急迫度打分（1-10）'],
+    ['f_startBy','最迟启动解决时间','date','f_doneBy|最迟完成解决时间'],
+    ['f_timeWhy','为什么是这个时间节点','l'],['f_noBiz','不解决的业务影响','l'],['f_noPer','不解决的个人影响','l'],
+    ['f_noLoss','什么都不做的量化损失','l'],['f_winBiz','解决后的企业价值（理想场面）','l'],
+    ['f_winPer','解决后的个人价值','l'],['f_winOther','对其他人员 / 事项的正面影响','l']
+  ]},
+  {name:'四、过往尝试与竞争', hint:'必问：曾经的解决方式是什么？效果如何？好在哪里/不好是哪些原因造成的？\n再来一句：「除了长松还接触过其他公司吗？他们为什么没能帮您解决这个问题？」＋了解过往学习/咨询消费习惯。', fields:[
+    ['f_tried','过往尝试的解决方式、效果','l'],['f_triedWhy','效果好 / 不好的核心原因','l'],
+    ['f_planSelf','客户自己的解决打算','l'],['f_otherConsult','是否接触过其他咨询公司','s'],
+    ['f_otherWhy','对方未解决问题的原因','l'],['f_learnHabit','过往学习 / 咨询消费习惯','l']
+  ]},
+  {name:'五、价值评估与长松匹配', hint:'必问：您合作且验证过的机构里，哪些价值您是最有感觉且认同的？对方做得好的/不好的分别是？您如何评估这些价值？\n然后匹配：「如果长松作为第三方帮您解决，您期望达到什么效果？这种效果您是如何评估和衡量的？」——顺势把长松独特价值报进去。', fields:[
+    ['f_valueTop','合作第三方最看重的价值','l'],['f_csMatch','长松独特价值植入点','l'],
+    ['f_compGoodBad','合作过的机构优势 / 不足','l'],['f_evalStd','客户如何评估这些价值','l'],
+    ['f_expect','期望长松达成的核心效果','l'],['f_kpi','效果的量化衡量指标','l']
+  ]},
+  {name:'六、阻碍预判', hint:'必问：您认为解决方案会遇到哪些阻碍？如果遇到，您计划如何解决？\n——把反对意见提前亮出来提前拆掉，成交那天阻力最小。最后补一份问题清单逐项排查。', fields:[
+    ['f_blocks','方案推进可能遇到的阻碍','l'],['f_blockPlan','阻碍的应对思路','l'],['f_moreQ','补充问题清单 / 排查','l']
+  ]},
+  {name:'七、缔结确认（预算 · 流程 · 对接人）', hint:'按顺序五步确认：整体理解→紧迫性→解决方案匹配→长松优势认可→合作成功关键因素，每步都要拿到 YES。\n然后收口：「咱说归说，做是做——要解决这些问题，您的具体预算是多少？」「贵司合作支付的付款流程是什么样子的？什么时间确认？和谁对接？」', fields:[
+    ['f_cfm1','沟通整体理解确认','l'],['f_cfm2','紧迫性确认','l'],['f_cfm3','解决方案匹配度确认','l'],
+    ['f_cfm4','长松优势与需求匹配确认','l'],['f_keyFactor','合作成功的关键因素','l'],['f_moreNeeds','其他补充需求','l'],
+    ['f_budget','项目预算范围','s'],['f_payFlow','企业付款审批流程','l'],['f_confirmWhen','合作最终确认时间','s'],['f_contact','后续对接人及联系方式','s']
+  ]}
+];
+var VISIT_DATE_FIELDS = ['f_date','f_startBy','f_doneBy'];
+// 展开：把成对定义（第4项 "id|标签"）拆为独立字段，供收集/计数/详情统一使用
+function expandField(f){
+  if(typeof f[3] === 'string' && f[3].indexOf('|') >= 0){
+    const sAt = f[3].indexOf('|');
+    return [[f[0],f[1],f[2]], [f[3].slice(0,sAt), f[3].slice(sAt+1), f[2]]];
+  }
+  return [f];
+}
+function expandGroups(){
+  const out = [];
+  VISIT_GROUPS.forEach(g=>{
+    let fs = [];
+    g.fields.forEach(f=>{ fs = fs.concat(expandField(f)); });
+    out.push({name:g.name, fields:fs});
+  });
+  return out;
+}
+function emptyVisit(){ return {f_date: new Date().toISOString().slice(0,10)}; }
+function renderVisitFields(v){
+  v = v || {};
+  return VISIT_GROUPS.map(g=>{
+    let out = `<div class="vg-head">${esc(g.name)}</div>`;
+    if(g.hint){ out += `<details class="vg-hint"><summary>💡 现场话术</summary><div>${esc(g.hint)}</div></details>`; }
+    const fs = g.fields;
+    for(let i=0;i<fs.length;i++){
+      const f = fs[i];
+      // 显式成对字段（第4项编码为 "另一字段ID|标签"）
+      if(typeof f[3] === 'string' && f[3].indexOf('|') >= 0){
+        const sepAt = f[3].indexOf('|');
+        const pid = f[3].slice(0,sepAt), plab = f[3].slice(sepAt+1);
+        const val = esc(v[f[0]]==null?'':v[f[0]]), pval = esc(v[pid]==null?'':v[pid]);
+        out += `<div class="v-grid">${fieldInput(f,val)}${fieldInput([pid,plab,f[2]],pval)}</div>`;
+        continue;
+      }
+      const nxt = fs[i+1];
+      // 相邻两个短文本自动并排
+      if(f[2]==='s' && !f[3] && nxt && nxt[2]==='s' && !nxt[3]){
+        out += `<div class="v-grid">${fieldInput(f,esc(v[f[0]]==null?'':v[f[0]]))}${fieldInput(nxt,esc(v[nxt[0]]==null?'':v[nxt[0]]))}</div>`;
+        i++;
+        continue;
+      }
+      const val = esc(v[f[0]]==null?'':v[f[0]]);
+      out += (f[2]==='l') ? `<div class="v-full">${fieldInput(f,val)}</div>` : `<div class="v-grid"><div>${fieldInput(f,val)}</div></div>`;
+    }
+    return out;
+  }).join('');
+}
+function fieldInput(f, val){
+  const [id,label,type] = f;
+  const t = type||'text';
+  if(t==='l'){
+    return `<label class="fl">${esc(label)}</label><textarea id="vf-${id}" style="min-height:48px" placeholder="${esc(label)}">${val}</textarea>`;
+  }
+  if(t==='num'){
+    return `<label class="fl">${esc(label)}</label><input type="number" id="vf-${id}" min="1" max="10" value="${val}" placeholder="1-10 分">`;
+  }
+  if(t==='date'){
+    return `<label class="fl">${esc(label)}</label><input type="date" id="vf-${id}" value="${val}">`;
+  }
+  return `<label class="fl">${esc(label)}</label><input type="text" id="vf-${id}" value="${val}" placeholder="${esc(label)}">`;
+}
+function collectVisit(){
+  const v = {};
+  expandGroups().forEach(g=>g.fields.forEach(f=>{
+    const el = document.getElementById('vf-'+f[0]);
+    if(el) v[f[0]] = String(el.value||'').trim();
+  }));
+  const d = document.getElementById('vf-f_date');
+  if(d) v.f_date = d.value || new Date().toISOString().slice(0,10);
+  return v;
+}
+function visitFilledCount(v){
+  if(!v) return 0;
+  let n = 0;
+  expandGroups().forEach(g=>g.fields.forEach(f=>{ if(String(v[f[0]]||'').trim()) n++; }));
+  return n + (String(v.f_date||'').trim()?1:0);
+}
+const VISIT_TOTAL = expandGroups().reduce((a,g)=>a+g.fields.length,0) + 1;
+function priScore(c){
+  if(!c.visit) return null;
+  const im = parseInt(c.visit.f_importance), ur = parseInt(c.visit.f_urgency);
+  if(!im || !ur) return null;
+  return im * ur;
+}
+function visitHtml(c){
+  const v = c.visit;
+  const filled = visitFilledCount(v);
+  if(!filled){ return `<div class="sec">拜访诊断单</div><p class="muted fs12">尚未填写。编辑案例 → 切到「② 拜访诊断单」页签即可按《拜访客户记录表》模板补录。</p>`; }
+  return `<div class="sec">拜访诊断单<span class="tag kb" style="margin-left:8px">${filled}/${VISIT_TOTAL} 项 · 拜访日 ${esc((v&&v.f_date)||'-')}</span></div>
+    ${expandGroups().map(g=>{
+      const rows = g.fields.filter(f=>String((v?v[f[0]]:'')||'').trim()).map(f=>`<div class="kv"><div class="k">${esc(f[1])}</div><div class="v">${esc(v[f[0]])}</div></div>`).join('');
+      if(!rows) return '';
+      const scores = g.fields.filter(f=>f[0]==='f_importance'||f[0]==='f_urgency').map(f=>`<div class="kv"><div class="k">${esc(f[1])}</div><div class="v"><b style="color:var(--gold2)">${esc(v[f[0]])}</b> / 10</div></div>`).join('');
+      return `<details class="kb-sol" open><summary class="t" style="cursor:pointer">▶ ${esc(g.name)}</summary>${rows}${scores}</details>`;
+    }).join('')}`;
+}
+
+/* ---------- 跟进优先级视图 ---------- */
+function dueInfo(c){
+  const v = c.visit; if(!v) return null;
+  const dl = v.f_doneBy || v.f_startBy;
+  if(!dl) return null;
+  const d = new Date(dl + 'T23:59:59');
+  if(isNaN(d.getTime())) return null;
+  return { date: dl, days: Math.ceil((d - new Date()) / 86400000) };
+}
+function dueBadge(x){
+  if(!x.due) return '';
+  if(x.due.days < 0) return `<span class="due-badge due-over">已过期${-x.due.days}天</span>`;
+  if(x.due.days <= 7) return `<span class="due-badge due-soon">${x.due.days===0?'今天到期':'剩'+x.due.days+'天'}</span>`;
+  return '';
+}
+function renderPriority(){
+  let scored = state.cases.filter(c=>priScore(c)).map(c=>({c,s:priScore(c),im:+c.visit.f_importance,ur:+c.visit.f_urgency}));
+  scored.forEach(x=>{ x.due = dueInfo(x.c); });
+  const bkt = x => (x.due && x.due.days < 0) ? 0 : (x.due && x.due.days <= 7) ? 1 : 2;
+  scored.sort((a,b)=> bkt(a)-bkt(b) || b.s-a.s);
+  const expN = scored.filter(x=>bkt(x)===0).length;
+  const soonN = scored.filter(x=>bkt(x)===1).length;
+  document.getElementById('pr-alerts').innerHTML = scored.length ?
+    (expN||soonN ? `<div class="pr-alert-strip pr-hot">🔥 <b>${expN}</b> 家已过最迟节点待跟进 · ⏰ <b>${soonN}</b> 家 7 天内到节点——都已自动置顶到榜首</div>` : `<div class="pr-alert-strip pr-ok">✅ 暂无到期提醒：目前没有压线或超期的跟进对象</div>`) : '';
+  const hi = x => x >= 7;
+  function qCell(cls,title,cond,tip){
+    const items = scored.filter(x=>cond(x));
+    return `<div class="quad ${cls}"><h5>${title}<span>${items.length} 家</span></h5>
+      ${items.length?`<ul>${items.slice(0,8).map(x=>`<li onclick="openDetail('${x.c.id||('c'+x.c.no)}')"><span>${esc(x.c.c)}</span><b>${x.im}×${x.ur}=${x.s}</b></li>`).join('')}</ul>${items.length>8?`<p class="fs12 muted">另有 ${items.length-8} 家见右侧排行</p>`:''}`:`<p class="fs12 muted">${tip}</p>`}</div>`;
+  }
+  document.getElementById('pr-quadrant').innerHTML = scored.length?
+    qCell('q-hot','🔥 高重要 × 高急迫（立即跟进）', x=>hi(x.im)&&hi(x.ur),'先填诊断单：重要性≥7 且急迫度≥7 的会落在这') +
+    qCell('q-plan','📌 高重要 × 低急迫（排期规划）', x=>hi(x.im)&&!hi(x.ur),'适合配合企业年度节奏做预埋') :
+    `<div class="empty">还没有诊断单打分数据。<br>在案例库编辑任意案例，切到「② 拜访诊断单」页签填写重要性 / 急迫度后，这里会自动出图。</div>`;
+  document.getElementById('pr-quadrant').innerHTML += scored.length?
+    qCell('q-warm','⏳ 低重要 × 高急迫（快速成交）', x=>!hi(x.im)&&hi(x.ur),'小切口产品或快决策客户') :
+    '';
+  document.getElementById('pr-quadrant').innerHTML += scored.length?
+    qCell('q-cold','💤 低重要 × 低急迫（养客区）', x=>!hi(x.im)&&!hi(x.ur),'保持联系，等变化再升级') : '';
+
+  document.getElementById('pr-list').innerHTML = scored.length? scored.map(({c,s,im,ur,due})=>{
+    const v = c.visit;
+    const deadline = v.f_doneBy || v.f_startBy || '-';
+    const color = s>=49?'#c0392b':s>=28?'#d67a1e':'#7a8794';
+    return `<div class="sim-item">
+      <div class="flex" style="justify-content:space-between">
+        <b onclick="openDetail('${c.id||('c'+c.no)}')" style="cursor:pointer">${esc(c.c)}</b>
+        <span>${dueBadge({due})}<span class="pri-score" style="background:${color}">${s}</span></span>
+      </div>
+      <div class="fs12 muted">重要性 ${im} × 急迫度 ${ur} · 最迟节点 ${esc(deadline)} ${v.f_budget?('· 预算 '+esc(v.f_budget)):''}${v.f_contact?(' · 对接 '+esc(v.f_contact.slice(0,14))):''}</div>
+      <div class="mt8">${v.f_painMain?`<span class="tag pain">${esc(v.f_painMain.slice(0,26))}${v.f_painMain.length>26?'…':''}</span>`:''}
+        ${v.f_expect?`<span class="tag sol">期待：${esc(v.f_expect.slice(0,18))}${v.f_expect.length>18?'…':''}</span>`:''}
+        ${v.f_contact?`<span class="tag mod">对接：${esc(v.f_contact.slice(0,14))}${v.f_contact.length>14?'…':''}</span>`:''}</div>
+    </div>`;
+  }).join('') : '<div class="empty">暂无打分记录。诊断单里「三、动机铁三角」的两个评分是优先级的燃料。</div>';
+}
+
+/* ============================================================
+   知识库
+   ============================================================ */
+var kbTab = 'sol';
+var KB_DESC = {
+  sol: '每个常见问题对应长松的标准解法、落地动作、工具与话术。系统预置了从案例中提炼的 18 个主题，可随时补充自己的知识。',
+  playbook: '长松组织系统九大模块的问题清单与老板核心痛苦——拜访时的诊断地图与共情话术来源。',
+  consult: '顾问式拜访模型全流程：认知公式→钻石模型/动因铁三角→开场三件事→“探定影达”需求挖掘→异议处理→行动收尾→商机评估表，含全套实战话术。'
+};
+function kbSwitch(t){ kbTab = t; renderKb(); }
+function renderKb(){
+  const isPb = kbTab === 'playbook', isCs = kbTab === 'consult';
+  document.getElementById('kbt-sol').classList.toggle('on', kbTab==='sol');
+  document.getElementById('kbt-playbook').classList.toggle('on', isPb);
+  document.getElementById('kbt-consult').classList.toggle('on', isCs);
+  document.getElementById('kb-list').style.display = (isPb||isCs) ? 'none' : '';
+  document.getElementById('kb-playbook').style.display = isPb ? '' : 'none';
+  document.getElementById('kb-consult').style.display = isCs ? '' : 'none';
+  document.getElementById('kb-addbtn').style.display = (isPb||isCs) ? 'none' : '';
+  document.getElementById('kb-subdesc').textContent = KB_DESC[kbTab];
+  if(isPb){ renderPlaybook(); return; }
+  if(isCs){ renderConsult(); return; }
+  const list = state.kb;
+  document.getElementById('kb-list').innerHTML = list.map(k=>{
+    const st = k.status||'学习中';
+    const stCls = st==='已掌握'?'st-done':st==='待研究'?'st-todo':'st-learning';
+    return `<div class="kb-card">
+      <h4><span class="tag kb">${esc(k.problem)}</span>
+        <span class="status ${stCls}">${esc(st)}</span>
+        <span class="flex" style="margin-left:auto">
+          <button class="btn ghost sm" onclick="openKbForm('${k.id}')">✎ 编辑</button>
+          <button class="btn danger sm" onclick="deleteKb('${k.id}')">删除</button>
+        </span>
+      </h4>
+      ${k.desc?`<div class="kb-problem">${esc(k.desc)}</div>`:''}
+      ${(k.sols||[]).map(s=>`<div class="kb-sol">
+        <div class="t">▶ ${esc(s.name)}</div>
+        <ul>${(s.actions||[]).map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+        ${(s.tools||[]).length?`<div class="kb-tools">工具：${(s.tools||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>`:''}
+        ${s.speech?`<div class="quote">${esc(s.speech)}</div>`:''}
+      </div>`).join('')}
+      ${k.note?`<div class="fs12 muted mt8">📌 我的备注：${esc(k.note)}</div>`:''}
+      ${(k.sols||[]).some(s=>s.cases&&s.cases.length)?`<div class="fs12 muted mt8">🔗 相关案例：${[...new Set((k.sols||[]).flatMap(s=>s.cases||[]))].map(no=>`<span class="tag mod" onclick="openDetail('c${no}')" title="点击查看案例详情">#${no}</span>`).join('')}</div>`:''}
+    </div>`;
+  }).join('') || '<div class="empty">知识库为空，点击右上角新增。</div>';
+}
+function renderPlaybook(){
+  const PB = (typeof SEED_PLAYBOOK !== 'undefined') ? SEED_PLAYBOOK : [];
+  const open = (typeof SEED_PLAYBOOK_OPEN !== 'undefined') ? SEED_PLAYBOOK_OPEN : '';
+  const close = (typeof SEED_PLAYBOOK_CLOSE !== 'undefined') ? SEED_PLAYBOOK_CLOSE : '';
+  const el = document.getElementById('kb-playbook');
+  if(!PB.length){ el.innerHTML = '<div class="empty">痛点库未加载</div>'; return; }
+  el.innerHTML = `
+    ${open?`<div class="quote">${esc(open)}</div>`:''}
+    ${PB.map(pb=>`
+    <div class="kb-card">
+      <h4><span class="tag kb">${esc(pb.module)}</span><span class="muted fs12">${esc(pb.metaphor||'')}</span></h4>
+      ${pb.note?`<p class="fs12 muted mt8">${esc(pb.note)}</p>`:''}
+      <details class="kb-sol" open><summary class="t" style="cursor:pointer">▶ 核心问题清单（${pb.problems.length} 条）</summary>
+        <ul>${pb.problems.map(p=>`<li style="margin-bottom:6px;white-space:pre-line">${esc(p)}</li>`).join('')}</ul>
+      </details>
+      <details class="kb-sol"><summary class="t" style="cursor:pointer">▶ 老板的核心痛苦（${pb.bossPains.length} 条）</summary>
+        <ul>${pb.bossPains.map(p=>`<li style="margin-bottom:6px;color:#b3402f">${esc(p)}</li>`).join('')}</ul>
+      </details>
+    </div>`).join('')}
+    ${close?`<div class="quote">${esc(close)}</div>`:''}
+  `;
+}
+function renderConsult(){
+  const C = (typeof SEED_CONSULT !== 'undefined') ? SEED_CONSULT : null;
+  const el = document.getElementById('kb-consult');
+  if(!C){ el.innerHTML = '<div class="empty">顾问式拜访模型未加载</div>'; return; }
+  const stepHtml = s => `<div class="mt8"><b>${esc(s.t)}</b><p class="fs12">${esc(s.d)}</p>${s.say?`<div class="quote">${esc(s.say)}</div>`:''}</div>`;
+  el.innerHTML = `
+    <div class="card"><h3><span class="dot"></span>${esc(C.title)} · 认知起点</h3>
+      <p class="fs12 muted">${esc(C.subtitle)}</p>
+      <div class="quote" style="margin-top:10px"><b>${esc(C.formula)}</b></div>
+      <div class="grid g3 mt8">${C.formulaNotes.map(n=>`<div class="gcard"><div class="gt">${esc(n.t)}</div><div class="fs12">${esc(n.d)}</div></div>`).join('')}</div>
+    </div>
+    <div class="card"><h3><span class="dot"></span>传统 VS 顾问式</h3>
+      <div class="grid g2">
+        <div class="gcard"><div class="gt">${esc(C.vs.tradTitle)}</div><ul>${C.vs.trad.map(x=>`<li class="fs12">${esc(x)}</li>`).join('')}</ul></div>
+        <div class="gcard"><div class="gt">${esc(C.vs.consTitle)}</div><ul>${C.vs.cons.map(x=>`<li class="fs12">${esc(x)}</li>`).join('')}</ul></div>
+      </div>
+      <p class="fs12 mt8" style="color:var(--gold2)"><b>${esc(C.vs.key)}</b></p>
+    </div>
+    <div class="card"><h3><span class="dot"></span>核心理论模型</h3>
+      ${C.theory.map(t=>`
+      <div class="kb-sol" style="margin-bottom:10px"><div class="t">▶ ${esc(t.name)} — ${esc(t.desc)}</div>
+        ${t.items.map(it=>`<div class="kv"><div class="k" style="white-space:normal;max-width:180px;text-align:left"><b>${esc(it.t)}</b></div><div class="v fs12">${esc(it.d)}</div></div>`).join('')}
+        ${(t.tips||[]).length?`<div class="kb-tools">${t.tips.map(x=>`<div class="fs12">💡 ${esc(x)}</div>`).join('')}</div>`:''}
+        ${(t.roles||[]).length?`<div class="kb-tools mt8">决策链五大角色：${t.roles.map(r=>`<span class="tag mod">${esc(r.t)}</span>`).join('')}
+          ${t.roles.map(r=>`<div class="fs12 mt8"><b>${esc(r.t)}</b> — ${esc(r.d)}</div>`).join('')}</div>`:''}
+      </div>`).join('')}
+    </div>
+    <div class="card"><h3><span class="dot"></span>拜访全流程四步</h3>
+      ${C.flow.map(f=>`
+      <div class="kb-sol" style="margin-bottom:12px">
+        <span class="tag mod">${esc(f.stage)}</span> <b>${esc(f.name)}</b>
+        <p class="fs12 muted mt8">${esc(f.summary)}</p>
+        ${f.steps.map(s=>stepHtml(s)).join('')}
+        ${f.say?`<div class="quote">${esc(f.say)}</div>`:''}
+      </div>`).join('')}
+    </div>
+    <div class="card"><h3><span class="dot"></span>商机管理评估工具 — ${esc(C.tool.name)}</h3>
+      <p class="fs12 muted">${esc(C.tool.desc)}</p>
+      ${C.tool.items.map(it=>`<div class="mt8"><b>${esc(it.t)}</b><p class="fs12">${esc(it.d)}</p></div>`).join('')}
+    </div>
+    <div class="card"><h3><span class="dot"></span>${esc(C.demo.title)}</h3>
+      <p class="fs12">${esc(C.demo.client)}</p>
+      <div class="grid g2 mt8">
+        ${C.demo.cols.map(col=>`<div class="gcard"><div class="gt">${esc(col.t)}</div><ul>${col.items.map(x=>`<li class="fs12">${esc(x)}</li>`).join('')}</ul></div>`).join('')}
+      </div>
+    </div>
+    <div class="card"><h3><span class="dot"></span>总结与课后行动</h3>
+      ${C.summary.recap.map(r=>`<div class="mt8"><b>${esc(r.t)}</b><p class="fs12">${esc(r.d)}</p></div>`).join('')}
+      <div class="sec">课后行动</div>
+      ${C.summary.actions.map(a=>`<p class="fs12">${esc(a)}</p>`).join('')}
+      <div class="quote"><b>${esc(C.summary.motto)}</b></div>
+    </div>`;
+}
+function openKbForm(id){
+  const k = state.kb.find(x=>x.id===id) || {id:'kb'+Date.now(), problem:'', desc:'', sols:[{name:'',actions:[],tools:[],speech:'',cases:[]}], status:'学习中', note:''};
+  editingKbId = id || k.id;
+  document.getElementById('kbf-title').textContent = id?'编辑知识条目':'新增知识条目';
+  document.getElementById('kbf-body').innerHTML = `
+    <label class="fl">问题名称 *（如：组织架构混乱）</label>
+    <input type="text" id="kb-problem" value="${esc(k.problem)}">
+    <label class="fl">问题描述</label>
+    <textarea id="kb-desc">${esc(k.desc||'')}</textarea>
+    <label class="fl">掌握程度</label>
+    <select id="kb-status">
+      <option value="已掌握" ${k.status==='已掌握'?'selected':''}>已掌握</option>
+      <option value="学习中" ${k.status==='学习中'?'selected':''}>学习中</option>
+      <option value="待研究" ${k.status==='待研究'?'selected':''}>待研究</option>
+    </select>
+    <div id="kb-sols"></div>
+    <button class="btn ghost sm mt8" onclick="addSolBlock()">＋ 增加一条解法</button>
+    <label class="fl">我的备注</label>
+    <textarea id="kb-note">${esc(k.note||'')}</textarea>
+  `;
+  const sols = k.sols && k.sols.length ? k.sols : [{name:'',actions:[],tools:[],speech:'',cases:[]}];
+  document.getElementById('kb-sols').innerHTML = sols.map((s,i)=>solBlockHtml(s,i)).join('');
+  openModal('kbform-mask');
+}
+function solBlockHtml(s, i){
+  return `<div class="kb-sol" id="sol-${i}">
+    <label class="fl">解法名称（第 ${i+1} 条）</label>
+    <div class="flex"><input type="text" id="sol-name-${i}" value="${esc(s.name)}"><button class="btn danger sm" onclick="removeSolBlock(${i})">删除本条</button></div>
+    <label class="fl">落地动作（每行一个）</label>
+    <textarea id="sol-act-${i}">${esc((s.actions||[]).join('\n'))}</textarea>
+    <label class="fl">工具 / 表单（逗号分隔）</label>
+    <input type="text" id="sol-tools-${i}" value="${esc((s.tools||[]).join('、'))}">
+    <label class="fl">关键话术 / 金句</label>
+    <textarea id="sol-speech-${i}">${esc(s.speech||'')}</textarea>
+  </div>`;
+}
+function addSolBlock(){
+  const box = document.getElementById('kb-sols');
+  const n = box.children.length;
+  const div = document.createElement('div');
+  div.innerHTML = solBlockHtml({name:'',actions:[],tools:[],speech:'',cases:[]}, n);
+  box.appendChild(div);
+}
+function removeSolBlock(i){ document.getElementById('sol-'+i).remove(); }
+function saveKbForm(){
+  const problem = document.getElementById('kb-problem').value.trim();
+  if(!problem){ alert('请填写问题名称'); return; }
+  const box = document.getElementById('kb-sols');
+  const sols = [...box.children].map(el=>{
+    const i = parseInt(el.id.replace('sol-',''));
+    return {
+      name: document.getElementById('sol-name-'+i).value.trim(),
+      actions: document.getElementById('sol-act-'+i).value.split('\n').map(s=>s.trim()).filter(Boolean),
+      tools: document.getElementById('sol-tools-'+i).value.split(/[、,，]/).map(s=>s.trim()).filter(Boolean),
+      speech: document.getElementById('sol-speech-'+i).value.trim(),
+      cases: []
+    };
+  }).filter(s=>s.name);
+  const idx = state.kb.findIndex(x=>x.id===editingKbId);
+  const data = {id:editingKbId, problem, desc:document.getElementById('kb-desc').value.trim(), sols, status:document.getElementById('kb-status').value, note:document.getElementById('kb-note').value.trim()};
+  if(idx>=0) state.kb[idx] = data; else state.kb.push(data);
+  save(); closeModal('kbform-mask'); renderKb();
+}
+function deleteKb(id){
+  if(!confirm('确定删除该知识条目？')) return;
+  state.kb = state.kb.filter(x=>x.id!==id);
+  save(); renderKb();
+}
+
+/* ============================================================
+   学习方向
+   ============================================================ */
+function renderLearning(){
+  const cs = state.cases;
+  const pains = tagCounts(cs,'pain');
+  const total = pains.reduce((a,x)=>a+x[1],0)||1;
+
+  // ① 核心能力：高频问题
+  const core = pains.slice(0,6);
+  document.getElementById('ln-core').innerHTML = core.map(([p,n],i)=>`
+    <div class="todo-item">
+      <div class="todo-no">${i+1}</div>
+      <div class="todo-body"><b>${esc(p)}</b> <span class="tag pain" style="margin-left:6px">${n} 个案例</span>
+        <p>命中率 ${Math.round(n/total*100)}%。已在知识库「${esc(p)}」沉淀解法，建议每次走访后回填新案例，强化话术。</p></div>
+    </div>`).join('');
+
+  // ② 空白领域
+  const known = new Set(pains.map(x=>x[0]));
+  const gap = PAIN_CANON.filter(p=>!known.has(p)).concat(PAIN_CANON.filter(p=>known.has(p) && tagCounts(cs,'pain').find(x=>x[0]===p)[1]<=2));
+  document.getElementById('ln-gap').innerHTML = gap.slice(0,8).map((p,i)=>`
+    <div class="todo-item">
+      <div class="todo-no gold">${i+1}</div>
+      <div class="todo-body"><b>${esc(p)}</b>
+        <p>你的案例库中这类问题还很薄弱（0~2 个案例）。拜访时主动用提问挖掘，并把解法补进知识库。</p></div>
+    </div>`).join('') || '<div class="empty">暂无空白领域，覆盖很全面！</div>';
+
+  // ③ 行业深耕
+  const inds = tagCounts(cs.map(c=>({ind:c.ind})).filter(c=>c.ind),'ind').slice(0,8);
+  document.getElementById('ln-ind').innerHTML = inds.map(([k,v],i)=>`
+    <div class="todo-item">
+      <div class="todo-no">${i+1}</div>
+      <div class="todo-body"><b>${esc(k)}</b> <span class="tag mod">${v} 例</span>
+        <p>${v>=5?'已成体系，可沉淀行业版「问题-解法-话术」模板。':'案例偏少，建议多走访，形成行业方法论。'}</p></div>
+    </div>`).join('') || '<div class="empty">暂无行业数据</div>';
+
+  // ④ 学习清单
+  document.getElementById('ln-todo').innerHTML = state.todos.map((t,i)=>`
+    <div class="todo-item">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTodo(${i})">
+      </label>
+      <div class="todo-body" style="${t.done?'text-decoration:line-through;color:var(--muted)':''}"><b>${esc(t.text)}</b></div>
+      <button class="btn danger sm" onclick="delTodo(${i})">×</button>
+    </div>`).join('');
+
+  // ⑤ 交叉销售
+  const modPairs = {};
+  cs.forEach(c=>{
+    const m = c.mod||[];
+    for(let i=0;i<m.length;i++) for(let j=i+1;j<m.length;j++){
+      const key = m[i]<m[j]?m[i]+'→'+m[j]:m[j]+'→'+m[i];
+      modPairs[key]=(modPairs[key]||0)+1;
+    }
+  });
+  const up = Object.entries(modPairs).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.getElementById('ln-upsell').innerHTML = up.length? up.map(([k,v])=>`
+    <div class="bar-row"><div class="bar-lab" style="width:210px">${esc(k)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/up[0][1]*100)}%;background:linear-gradient(90deg,#2f6fb3,#c8a45a)">${v}</div></div>
+      <div class="bar-num"><b>${v}</b></div></div>`).join('') : '<div class="empty">案例还少，多录一些就能看到续单规律。</div>';
+}
+function addTodo(){
+  const t = prompt('输入学习事项：');
+  if(t && t.trim()){ state.todos.push({text:t.trim(), done:false}); save(); renderLearning(); }
+}
+function toggleTodo(i){ state.todos[i].done = !state.todos[i].done; save(); renderLearning(); }
+function delTodo(i){ state.todos.splice(i,1); save(); renderLearning(); }
+
+/* ============================================================
+   数据管理
+   ============================================================ */
+function renderData(){
+  const cs = state.cases;
+  const svc = cs.filter(c=>c.type!=='走访案例').length;
+  const last = localStorage.getItem('cs_lastBackup');
+  let bk;
+  if(!last){
+    bk = `<div class="pr-alert-strip pr-hot">⚠️ 还没有备份过：数据只存在本机浏览器里，点下方按钮立即导出一份 JSON。</div>`;
+  }else{
+    const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+    bk = days >= 7
+      ? `<div class="pr-alert-strip pr-hot">⏰ 距上次备份已 ${days} 天，建议立即导出备份。</div>`
+      : `<div class="pr-alert-strip pr-ok">✅ ${days===0?'今天':days+' 天前'}已备份 · 当前 ${cs.length} 条案例 / ${state.kb.length} 条知识</div>`;
+  }
+  document.getElementById('bk-strip').innerHTML = bk;
+  document.getElementById('dv-state').innerHTML = `
+    <div class="kv"><div class="k">案例</div><div class="v"><b>${cs.length}</b> 条（服务 ${svc} / 走访 ${cs.length-svc}）</div></div>
+    <div class="kv"><div class="k">知识库</div><div class="v"><b>${state.kb.length}</b> 条</div></div>
+    <div class="kv"><div class="k">学习清单</div><div class="v"><b>${state.todos.length}</b> 项</div></div>
+    <div class="kv"><div class="k">存储位置</div><div class="v">本机浏览器 localStorage（离线可用）</div></div>`;
+  document.getElementById('dv-pain-dict').innerHTML = PAIN_CANON.map(p=>`<span class="tag pain">${p}</span>`).join('');
+  document.getElementById('dv-sol-dict').innerHTML = SOL_CANON.map(s=>`<span class="tag sol">${s}</span>`).join('');
+}
+function exportAll(){
+  localStorage.setItem('cs_lastBackup', new Date().toISOString());
+  const payload = { exportedAt: new Date().toISOString(), cases: state.cases, kb: state.kb, todos: state.todos };
+  const blob = new Blob([JSON.stringify(payload, null, 1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '长松案例库备份-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importFile(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!Array.isArray(data.cases)){ alert('文件格式不正确：缺少 cases 数组'); return; }
+      const mode = document.getElementById('imp-mode').value;
+      if(mode==='replace'){
+        state.cases = data.cases;
+        state.kb = Array.isArray(data.kb)?data.kb:state.kb;
+        state.todos = Array.isArray(data.todos)?data.todos:state.todos;
+      }else{
+        const seen = new Set(state.cases.map(c=>c.id||('c'+c.no)));
+        state.cases = state.cases.concat(data.cases.filter(c=>!seen.has(c.id||('c'+c.no))));
+        if(Array.isArray(data.kb)){
+          const kseen = new Set(state.kb.map(k=>k.id));
+          state.kb = state.kb.concat(data.kb.filter(k=>!kseen.has(k.id)));
+        }
+        if(Array.isArray(data.todos)) state.todos = state.todos.concat(data.todos);
+      }
+      save(); refreshAll();
+      alert('导入成功！当前案例数：' + state.cases.length);
+    }catch(err){ alert('导入失败：' + err.message); }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+}
+function resetAll(){
+  if(!confirm('确定恢复为系统初始数据？你录入的自定义内容将被清空！建议先导出备份。')) return;
+  localStorage.removeItem(LS_CASES);
+  localStorage.removeItem(LS_KB);
+  localStorage.removeItem(LS_TODO);
+  load(); refreshAll();
+  alert('已恢复初始数据（154 个案例 + 18 条知识库）');
+}
+
+/* ---------- 拜访诊断单 · Excel回执导出（纯前端生成 .xlsx，零依赖） ---------- */
+function crc32(buf){
+  const T = crc32.T || (crc32.T = (function(){ const t=[]; for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c = c&1 ? 0xEDB88320^(c>>>1) : c>>>1; t[n]=c>>>0; } return t; })());
+  let c = 0xFFFFFFFF;
+  for(let i=0;i<buf.length;i++) c = T[(c^buf[i])&0xFF]^(c>>>8);
+  return (c^0xFFFFFFFF)>>>0;
+}
+function zipStore(files){
+  const enc = new TextEncoder();
+  const chunks=[]; const central=[]; let offset=0;
+  const u16=v=>[v&255,(v>>8)&255], u32=v=>[v&255,(v>>8)&255,(v>>>16)&255,(v>>>24)&255];
+  function push(a){ chunks.push(Uint8Array.from(a)); }
+  files.forEach(f=>{
+    const nameB = enc.encode(f.name);
+    const crc = crc32(f.data);
+    const lfh = [...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(f.data.length),...u32(f.data.length),...u16(nameB.length),...u16(0)];
+    push(lfh); push(nameB); push(f.data);
+    central.push({nameB, crc, size:f.data.length, offset});
+    offset += lfh.length + nameB.length + f.data.length;
+  });
+  const cdStart = offset; let cdSize = 0;
+  central.forEach(c=>{
+    const chdr = [...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(c.crc),...u32(c.size),...u32(c.size),...u16(c.nameB.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(c.offset)];
+    push(chdr); push(c.nameB);
+    cdSize += chdr.length + c.nameB.length;
+  });
+  push([...u32(0x06054b50),...u16(0),...u16(0),...u16(central.length),...u16(central.length),...u32(cdSize),...u32(cdStart),...u16(0)]);
+  const total = chunks.reduce((a,x)=>a+x.length,0);
+  const out = new Uint8Array(total); let p=0; chunks.forEach(x=>{ out.set(x,p); p+=x.length; });
+  return out;
+}
+function exportVisitExcel(){
+  const c = findCase(currentCaseId);
+  if(!c){ alert('请先从案例库打开某个案例'); return; }
+  const v = c.visit || {};
+  const rows = [];
+  rows.push(['【拜访诊断单回执】', '']);
+  rows.push(['公司全称', c.c||'']); rows.push(['案例编号', '#'+c.no]);
+  rows.push(['类型 / 行业', (c.type||'')+' · '+(c.prov||'')+(c.city?' '+c.city:'')+' · '+(c.ind||'')]);
+  const s = priScore(c);
+  if(s) rows.push(['跟进指数', c.visit.f_importance+' × '+c.visit.f_urgency+' = '+s]);
+  rows.push(['拜访时间', v.f_date||'']);
+  expandGroups().forEach(g=>{
+    rows.push(['▶ '+g.name, '']);
+    g.fields.forEach(f=>rows.push([f[1], v[f[0]]||'']));
+  });
+  rows.push(['记录系统', '长松案例大数据系统 · '+new Date().toISOString().slice(0,10)]);
+  const xesc = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function cell(col,n,txt){ return '<c r="'+col+n+'" t="inlineStr"><is><t xml:space="preserve">'+xesc(txt)+'</t></is></c>'; }
+  let sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+  sheet += '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">';
+  sheet += '<cols><col min="1" max="1" width="30" customWidth="1"/><col min="2" max="2" width="95" customWidth="1"/></cols><sheetData>';
+  rows.forEach((pair,i)=>{ sheet += '<row r="'+(i+1)+'">'+cell('A',i+1,pair[0])+(pair[1]!==''?cell('B',i+1,pair[1]):'')+'</row>'; });
+  sheet += '</sheetData></worksheet>';
+  const enc = t => new TextEncoder().encode(t);
+  const files = [
+    {name:'[Content_Types].xml', data:enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>')},
+    {name:'_rels/.rels', data:enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')},
+    {name:'xl/workbook.xml', data:enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="拜访诊断单" sheetId="1" r:id="rId1"/></sheets></workbook>')},
+    {name:'xl/_rels/workbook.xml.rels', data:enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>')},
+    {name:'xl/worksheets/sheet1.xml', data:enc(sheet)}
+  ];
+  const bytes = zipStore(files);
+  const blob = new Blob([bytes], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '拜访诊断单-' + (c.c||'客户') + '-' + (v.f_date||new Date().toISOString().slice(0,10)) + '.xlsx';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ---------- 拜访日历 ---------- */
+function renderCalendar(){
+  const items = state.cases.filter(c=>c.visit && c.visit.f_date).map(c=>({c, d:c.visit.f_date})).sort((a,b)=> b.d.localeCompare(a.d));
+  const last = items[0];
+  const monthNames = new Set(items.map(x=>x.d.slice(0,7)));
+  const thisMonth = new Date().toISOString().slice(0,7);
+  document.getElementById('cal-metrics').innerHTML = [
+    [items.length, '总拜访次数（有日期）'],
+    [monthNames.size, '覆盖月份'],
+    [items.filter(x=>x.d.slice(0,7)===thisMonth).length, '本月拜访'],
+    [last?last.d:'-', '最近一次拜访']
+  ].map(([n,l])=>`<div class="metric"><div class="num">${n}</div><div class="lab">${l}</div></div>`).join('');
+  const groups = {};
+  items.forEach(x=>{ const k = x.d.slice(0,7); (groups[k]=groups[k]||[]).push(x); });
+  document.getElementById('cal-body').innerHTML = items.length ?
+    Object.keys(groups).sort().reverse().map(mk=>`
+      <div class="cal-month">${esc(mk)} <span class="muted fs12">（${groups[mk].length} 次）</span></div>
+      ${groups[mk].map(x=>`
+      <div class="cal-item" onclick="openDetail('${x.c.id||('c'+x.c.no)}')">
+        <div class="cal-dot"></div>
+        <div style="flex:1">
+          <b>${esc(x.c.c)}</b> <span class="muted fs12">${esc(x.c.ind||'')}${x.c.type?(' · '+esc(x.c.type)):''}</span>
+          <div class="fs12 muted">${esc(x.d)}${x.c.visit.f_painMain?' · 痛点：'+esc(x.c.visit.f_painMain.slice(0,36))+(x.c.visit.f_painMain.length>36?'…':''):''}</div>
+        </div>
+        ${priScore(x.c)?`<span class="pri-score" style="background:#d67a1e">${priScore(x.c)}</span>`:''}
+      </div>`).join('')}`).join('')
+    : '<div class="empty">还没有带拜访日期的诊断单。在案例编辑页的「② 拜访诊断单」里填上拜访时间，这里就会长出时间轴。</div>';
+}
+
+/* ---------- 话术金句库 ---------- */
+function renderQuotes(){
+  const Q = (typeof SEED_QUOTES !== 'undefined') ? SEED_QUOTES : [];
+  const dyn = state.cases.filter(c=>c.quote && String(c.quote).trim()).map(c=>({no:c.no, company:c.c, quote:String(c.quote).trim(), theme:'我的收录'}));
+  const themes = [...new Set(Q.map(x=>x.theme).concat(dyn.map(x=>x.theme)))];
+  const themeSel = document.getElementById('qt-theme');
+  const cur = themeSel.value;
+  themeSel.innerHTML = '<option value="">全部主题</option>' + themes.map(t=>`<option ${t===cur?'selected':''}>${esc(t)}</option>`).join('');
+  const q = document.getElementById('qt-search').value.trim().toLowerCase();
+  const tf = themeSel.value;
+  let all = Q.concat(dyn);
+  if(tf) all = all.filter(x=>x.theme===tf);
+  if(q) all = all.filter(x=>(x.quote+' '+x.company).toLowerCase().includes(q));
+  document.getElementById('qt-count').textContent = `共 ${all.length} 条 / 全部 ${Q.length+dyn.length} 条`;
+  document.getElementById('qt-list').innerHTML = all.length ? all.map(x=>`
+    <div class="qt-card">
+      <div class="q">“${esc(x.quote)}”</div>
+      <div class="a"><span><span class="tag mod">${esc(x.theme)}</span> ${x.no?`<a href="javascript:void(0)" onclick="openDetail('c${x.no}')" style="cursor:pointer">${esc(x.company)} · 案例#${x.no}</a>`:esc(x.company)}</span><span class="muted">— ${esc(x.company)}</span></div>
+    </div>`).join('') : '<div class="empty">没有匹配的金句。换个关键词，或去案例详情里补充「老板金句」字段。</div>';
+}
+
+/* ---------- Excel 导入回填 ---------- */
+function xlsLabelMap(){
+  if(!xlsLabelMap.M){
+    xlsLabelMap.M = {};
+    expandGroups().forEach(g=>g.fields.forEach(f=>{ xlsLabelMap.M[f[1]] = f[0]; }));
+  }
+  return xlsLabelMap.M;
+}
+function zipParse(buf){
+  const u8 = new Uint8Array(buf);
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  let eocd = -1;
+  for(let i=u8.length-22;i>=0;i--){
+    if(u8[i]===0x50 && u8[i+1]===0x4b && u8[i+2]===0x05 && u8[i+3]===0x06){ eocd=i; break; }
+  }
+  if(eocd<0) throw new Error('不是有效的 xlsx 文件（缺少 ZIP 目录）');
+  const count = dv.getUint16(eocd+10,true);
+  let p = dv.getUint32(eocd+16,true);
+  const entries = {};
+  for(let i=0;i<count;i++){
+    if(dv.getUint32(p,true)!==0x02014b50) break;
+    const method = dv.getUint16(p+10,true);
+    const csize = dv.getUint32(p+20,true);
+    const nameLen = dv.getUint16(p+28,true);
+    const extraLen = dv.getUint16(p+30,true);
+    const commLen = dv.getUint16(p+32,true);
+    const lho = dv.getUint32(p+42,true);
+    const name = new TextDecoder().decode(u8.subarray(p+46, p+46+nameLen));
+    entries[name] = {method, csize, lho};
+    p += 46 + nameLen + extraLen + commLen;
+  }
+  return {u8, dv, entries};
+}
+function zipRaw(z, name){
+  const e = z.entries[name];
+  if(!e) return null;
+  const p = e.lho;
+  const nlen = z.dv.getUint16(p+26,true), elen = z.dv.getUint16(p+28,true);
+  return z.u8.subarray(p+30+nlen+elen, p+30+nlen+elen+e.csize);
+}
+async function zipEntry(z, name){
+  const raw = zipRaw(z, name);
+  if(!raw) return null;
+  const e = z.entries[name];
+  if(e.method === 0) return raw;
+  if(typeof DecompressionStream === 'undefined') throw new Error('当前浏览器不支持解压缩（Excel 重存的文件），请使用新版 Chrome/Edge');
+  const ds = new DecompressionStream('deflate-raw');
+  const ab = await new Response(new Blob([raw]).stream().pipeThrough(ds)).arrayBuffer();
+  return new Uint8Array(ab);
+}
+function xmlUnesc(s){ return String(s).replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&'); }
+function parseSharedStrings(xml){
+  const out = [];
+  const re = /<si>([\s\S]*?)<\/si>/g;
+  let m;
+  while((m = re.exec(xml))){
+    const ts = [...m[1].matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map(x=>x[1]);
+    out.push(xmlUnesc(ts.join('')));
+  }
+  return out;
+}
+function sheetRows(xml){
+  const rows = {};
+  const rowRe = /<row[^>]*r="(\d+)"[^>]*>([\s\S]*?)<\/row>/g;
+  let m;
+  while((m = rowRe.exec(xml))){
+    const rn = parseInt(m[1]);
+    const cells = {};
+    const cRe = /<c\s+([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g;
+    let cm;
+    while((cm = cRe.exec(m[2]))){
+      const attrs = cm[1]||'';
+      const inner = cm[2]||'';
+      const refM = attrs.match(/r="([A-Z]+)(\d+)"/);
+      if(!refM) continue;
+      const typeM = attrs.match(/t="([^"]+)"/);
+      let text = '';
+      if(typeM && typeM[1]==='inlineStr'){
+        const tm = inner.match(/<t[^>]*>([\s\S]*?)<\/t>/);
+        text = tm ? xmlUnesc(tm[1]) : '';
+      }else{
+        const vm2 = inner.match(/<v>([\s\S]*?)<\/v>/);
+        text = vm2 ? vm2[1] : '';
+        if(typeM && typeM[1]==='s') text = '\u0001' + parseInt(text);
+      }
+      cells[refM[1]] = text;
+    }
+    rows[rn] = cells;
+  }
+  return rows;
+}
+async function importXlsxBuffer(buf){
+  const z = zipParse(buf);
+  const sharedRaw = await zipEntry(z, 'xl/sharedStrings.xml');
+  const shared = sharedRaw ? parseSharedStrings(new TextDecoder().decode(sharedRaw)) : [];
+  let sheetName = Object.keys(z.entries).find(n=>/^xl\/worksheets\/sheet1\.xml$/.test(n)) || Object.keys(z.entries).find(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n));
+  if(!sheetName) throw new Error('xlsx 中找不到工作表');
+  const sheetRaw = await zipEntry(z, sheetName);
+  const xml = new TextDecoder().decode(sheetRaw);
+  const rowsRaw = sheetRows(xml);
+  const getCol = (cells, col) => {
+    const t = cells[col]; if(t===undefined) return '';
+    if(t.charAt(0)==='\u0001'){ const i = parseInt(t.slice(1)); return shared[i]||''; }
+    return xmlUnesc(t);
+  };
+  const ordered = Object.keys(rowsRaw).map(Number).sort((a,b)=>a-b);
+  const lineRows = ordered.map(rn => ({a: getCol(rowsRaw[rn],'A').trim(), b: getCol(rowsRaw[rn],'B').trim()}));
+  let company = '', caseNo = null, date = '';
+  lineRows.forEach(r=>{
+    if(r.a === '公司全称') company = r.b;
+    if(r.a === '案例编号'){ const mn = r.b.match(/#(\d+)/); if(mn) caseNo = parseInt(mn[1]); }
+    if(r.a === '拜访时间') date = r.b;
+  });
+  if(!company && !caseNo) throw new Error('未找到「公司全称」行——请确认导入的是系统导出的诊断单回执');
+  const L2I = xlsLabelMap();
+  const visit = {f_date: date || new Date().toISOString().slice(0,10)};
+  lineRows.forEach(r=>{ if(L2I[r.a] && r.b) visit[L2I[r.a]] = r.b; });
+  let c = null;
+  if(caseNo) c = state.cases.find(x=>x.no===caseNo);
+  if(!c && company) c = state.cases.find(x=>(x.c||'').trim()===company);
+  let created = false;
+  if(!c){
+    c = {id:'u'+Date.now(), no:nextNo(), c:company||('导入客户 '+new Date().toISOString().slice(0,10)), city:'', prov:'', ind:'', year:0, type:'走访案例', mod:[], pain:[], sol:[], res:'', t:'', createdAt:new Date().toISOString()};
+    state.cases.push(c); created = true;
+  }
+  c.visit = Object.assign({}, c.visit||{}, visit);
+  if(!c.visit.f_date) c.visit.f_date = visit.f_date;
+  save();
+  return {company: c.c, no: c.no, created, filled: visitFilledCount(c.visit)};
+}
+async function onXlsImport(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  try{
+    const buf = await file.arrayBuffer();
+    const r = await importXlsxBuffer(buf);
+    document.getElementById('xls-result').textContent = `✔ 已导入「${r.company}」（案例#${r.no}${r.created?'，新建':''}），诊断单已填 ${r.filled}/${VISIT_TOTAL} 项`;
+    refreshAll();
+  }catch(e){
+    document.getElementById('xls-result').textContent = '✘ ' + e.message;
+  }
+  input.value = '';
+}
+
+/* ---------- 打印调研单 ---------- */
+function printCase(){
+  const c = findCase(currentCaseId);
+  if(!c) return;
+  const v = c.visit||{};
+  const w = window.open('', '_blank');
+  if(!w){ alert('浏览器拦截了弹窗，请允许本页弹窗后重试'); return; }
+  const abs = f => /^data:image/.test(f) ? f : new URL(f, location.href).href;
+  const ph = getPhotos(c.no).slice(0,6);
+  const filled = VISIT_GROUPS.map(g=>{
+    const eg = expandGroups().find(x=>x.name===g.name);
+    const rows = eg.fields.filter(f=>String(v[f[0]]||'').trim()).map(f=>`<tr><td class="k">${esc(f[1])}</td><td>${esc(v[f[0]])}</td></tr>`).join('');
+    return rows ? `<h3>${esc(g.name)}</h3><table>${rows}</table>` : '';
+  }).join('');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(c.c)} · 拜访调研单</title><style>
+    body{font-family:"Microsoft YaHei",sans-serif;color:#222;font-size:12.5px;line-height:1.6;margin:24px}
+    h1{font-size:18px;color:#16324f;border-bottom:2px solid #c8a45a;padding-bottom:6px}
+    h2{font-size:13px;color:#16324f;margin:14px 0 6px}
+    h3{font-size:12.5px;color:#a9843f;margin:12px 0 4px}
+    table{width:100%;border-collapse:collapse}
+    td{border:1px solid #ddd;padding:5px 8px;vertical-align:top}
+    td.k{width:210px;background:#f5f7fa;color:#555}
+    .meta{margin:8px 0;font-size:12px;color:#555}
+    .tags span{display:inline-block;border:1px solid #ccc;border-radius:10px;padding:0 8px;margin:2px 3px;font-size:11px}
+    .res{background:#f2f7fc;padding:8px 10px;border-radius:6px}
+    .photos img{width:30%;margin:4px;border:1px solid #ddd}
+    .ft{color:#888;font-size:11px;margin-top:18px}
+  </style></head><body>
+  <h1>拜访调研单 · ${esc(c.c)} <span style="font-size:12px;color:#888">#${c.no}</span></h1>
+  <div class="meta">地区：${esc(c.city||'-')} ${esc(c.prov||'')} ｜ 行业：${esc(c.ind||'-')} ｜ 类型：${esc(c.type||'')} ｜ 年份：${c.year||'-'} ｜ 老师：${esc(c.t||'-')}</div>
+  <h2>合作模块</h2><div class="tags">${(c.mod||[]).map(x=>`<span>${esc(x)}</span>`).join('')||'-'}</div>
+  <h2>企业痛点</h2><div class="tags">${(c.pain||[]).map(x=>`<span>${esc(x)}</span>`).join('')||'-'}</div>
+  <h2>长松解法</h2><div class="tags">${(c.sol||[]).map(x=>`<span>${esc(x)}</span>`).join('')||'-'}</div>
+  <h2>成果 / 变化</h2><div class="res">${esc(c.res||'-')}</div>
+  ${c.quote?`<h2>老板金句</h2><div class="res">${esc(c.quote)}</div>`:''}
+  ${c.summary?`<h2>备注摘要</h2><p>${esc(c.summary)}</p>`:''}
+  ${filled?`<h2>拜访诊断单（${visitFilledCount(v)}/${VISIT_TOTAL} 项）</h2>${filled}`:''}
+  ${ph.length?`<h2>现场照片（前 ${ph.length} 张）</h2><div class="photos">${ph.map(f=>`<img src="${abs(f)}">`).join('')}</div>`:''}
+  <p class="ft">打印时间：${new Date().toLocaleString('zh-CN')} · 长松案例大数据系统</p>
+  </body></html>`);
+  w.document.close();
+  setTimeout(()=>{ w.focus(); w.print(); }, 500);
+}
+
+/* ---------- 弹窗 ---------- */
+function openModal(id){ document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal('detail-mask'); closeModal('form-mask'); closeModal('kbform-mask'); } });
+
+/* ---------- 启动 ---------- */
+function refreshAll(){
+  renderOverview();
+  renderRadar();
+  renderLibrary();
+  renderPriority();
+  renderCalendar();
+  renderQuotes();
+  renderKb();
+  renderLearning();
+  renderData();
+}
+document.getElementById('nav').addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(b) switchView(b.dataset.v);
+});
+load();
+switchView('overview');
+</script>
+</body>
+</html>
