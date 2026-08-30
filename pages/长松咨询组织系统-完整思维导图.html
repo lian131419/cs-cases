@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长松咨询组织系统 · 完整思维导图</title>
+<style>
+:root {
+  --bg: #f0f2f5;
+  --text: #1e293b;
+  --muted: #64748b;
+  --blue: #2563eb; --blue-bg: #eff6ff; --blue-border: #bfdbfe;
+  --green: #059669; --green-bg: #ecfdf5; --green-border: #a7f3d0;
+  --orange: #ea580c; --orange-bg: #fff7ed; --orange-border: #fed7aa;
+  --purple: #7c3aed; --purple-bg: #f5f3ff; --purple-border: #ddd6fe;
+  --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
+  --teal: #0d9488; --teal-bg: #f0fdfa; --teal-border: #99f6e4;
+  --slate: #475569; --slate-bg: #f8fafc; --slate-border: #e2e8f0;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+.container { max-width: 1400px; margin: 0 auto; }
+
+header { text-align: center; padding: 32px 0 20px; }
+header h1 { font-size: 26px; font-weight: 800; color: #0f172a; }
+header p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+/* Map structure */
+.map-root { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+
+/* Central node */
+.central { background: linear-gradient(135deg, #1e3a5f, #1a56db); color: #fff; padding: 22px 48px; border-radius: 16px; text-align: center; font-size: 20px; font-weight: 800; box-shadow: 0 4px 20px rgba(26,86,219,0.3); position: relative; }
+.central .sub { font-size: 13px; opacity: 0.8; font-weight: 400; margin-top: 4px; }
+
+/* Branch row */
+.branch-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; }
+.branch { flex: 1 1 300px; min-width: 280px; max-width: 420px; }
+
+/* Connector line (CSS) */
+.connector { width: 3px; height: 24px; background: #cbd5e1; margin: 0 auto; border-radius: 2px; }
+
+/* Branch card */
+.branch-card { border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.branch-header { padding: 14px 18px; font-weight: 700; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px; }
+.branch-header .icon { font-size: 20px; }
+.branch-body { padding: 14px 18px; background: #fff; font-size: 13px; line-height: 1.8; }
+
+.branch-header.blue { background: var(--blue); }
+.branch-header.green { background: var(--green); }
+.branch-header.orange { background: var(--orange); }
+.branch-header.purple { background: var(--purple); }
+.branch-header.red { background: var(--red); }
+.branch-header.teal { background: var(--teal); }
+.branch-header.slate { background: var(--slate); }
+
+/* Sub-items */
+.sub-item { padding: 4px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: flex-start; gap: 6px; }
+.sub-item:last-child { border-bottom: none; }
+.sub-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.sub-dot.blue { background: var(--blue); }
+.sub-dot.green { background: var(--green); }
+.sub-dot.orange { background: var(--orange); }
+.sub-dot.purple { background: var(--purple); }
+.sub-dot.red { background: var(--red); }
+.sub-dot.teal { background: var(--teal); }
+.sub-dot.slate { background: var(--slate); }
+
+.sub-label { font-weight: 600; color: var(--text); }
+.sub-desc { color: var(--muted); font-size: 12px; }
+
+/* Sub-branch nested */
+.sub-branch { margin: 6px 0 6px 16px; padding: 6px 12px; border-left: 2px solid #e2e8f0; font-size: 12px; color: var(--muted); }
+.sub-branch .strong { font-weight: 600; color: var(--text); }
+
+/* Horizontal connector bar */
+.h-bar { width: 100%; height: 3px; background: #cbd5e1; border-radius: 2px; margin: 0; position: relative; }
+
+/* Footer */
+.footer { text-align: center; padding: 30px 0; color: var(--muted); font-size: 12px; }
+
+/* Section divider */
+.section-title { text-align: center; font-weight: 700; font-size: 15px; color: var(--slate); margin: 16px 0 8px; padding: 6px 16px; background: #e2e8f0; border-radius: 20px; display: inline-block; }
+.section-wrap { text-align: center; width: 100%; }
+
+/* Two-column layout for branches */
+.branch-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+@media (max-width: 900px) { .branch-2col { grid-template-columns: 1fr; } }
+
+/* Wide card */
+.wide-card { background: #fff; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.wide-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+
+/* Tag list */
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.tag.blue { background: var(--blue-bg); color: var(--blue); }
+.tag.green { background: var(--green-bg); color: var(--green); }
+.tag.orange { background: var(--orange-bg); color: var(--orange); }
+.tag.red { background: var(--red-bg); color: var(--red); }
+.tag.purple { background: var(--purple-bg); color: var(--purple); }
+
+/* Mini table */
+.mini-table { width: 100%; font-size: 12px; margin-top: 8px; }
+.mini-table td { padding: 5px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+.mini-table td:first-child { font-weight: 600; white-space: nowrap; width: 30%; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>长松咨询组织系统 · 完整思维导图</h1>
+  <p>三层沟通体系 → 顾问式拜访方法论 → 组织系统内核 → 实战SOP → 完整工具矩阵</p>
+</header>
+
+<div class="map-root">
+
+<!-- ====== CENTRAL NODE ====== -->
+<div class="central">
+  长松咨询<br>组织系统沟通体系
+  <div class="sub">用顾问式方法 · 聊组织系统内容 · 推动认知到成交转化</div>
+</div>
+
+<div class="connector"></div>
+
+<!-- ====== LAYER 1: 三层架构 ====== -->
+<div class="section-wrap"><span class="section-title">第一层：销售沟通方法（怎么说话）</span></div>
+
+<div class="branch-row">
+  <!-- 顾问式拜访 -->
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header blue"><span class="icon">🗣</span> 顾问式拜访模型</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">开场三件事</span><br><span class="sub-desc">自我介绍→拜访目标→呈现价值</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">探（Explore）</span><br><span class="sub-desc">开放式提问，广泛探究痛点与机会</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">定（Define）</span><br><span class="sub-desc">定性定量，锁定关键细节</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">影（Shape）</span><br><span class="sub-desc">假设式+影响式提问，重塑认知</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">达（Agree）</span><br><span class="sub-desc">总结确认，达成共识→推动行动</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 钻石模型 -->
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header purple"><span class="icon">💎</span> 钻石模型 &amp; 动因铁三角</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">钻石模型五要素</span><br><span class="sub-desc">问题Pain→动因Why→方法How→价值Value→阻碍Block</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">动因铁三角</span><br><span class="sub-desc">最好时间Timing + 好收益Gain + 负面影响Pain</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">决策角色识别</span><br><span class="sub-desc">A批准者/K决策人/E评估者/U使用者/O影响者</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">异议处理四步</span><br><span class="sub-desc">澄清→同理→测试→解决</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">竞争格局四象限</span><br><span class="sub-desc">制胜点/潜力点/制败点/风险点</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LAYER 2: 组织诊断 ====== -->
+<div class="section-wrap"><span class="section-title">第二层：组织诊断框架（聊什么内容）</span></div>
+
+<div class="branch-row">
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header green"><span class="icon">🎯</span> 战略定位层</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">对标管理</span><br><span class="sub-desc">跟行业老大差距在哪？人效/战略定位/管控模式</span></div></div>
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">成本最低的差异化竞争</span><br><span class="sub-desc">聚焦赛道 + 成本最低 + 差异化 → 民企唯一战略</span></div></div>
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">BCD调研框架</span><br><span class="sub-desc">B业务层→C客户层→调研→D决策机制设计</span></div></div>
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">5年发展规划</span><br><span class="sub-desc">长期战略→年度目标→组织匹配</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header orange"><span class="icon">🏭</span> 制造型企业痛点矩阵</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">销售端9大痛点</span><br><span class="sub-desc">销量低/回款差/招人难/走私单/价格战/渠道单一/核心离职/躺平/老客流失</span></div></div>
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">生产端9大痛点</span><br><span class="sub-desc">良品率低/交期差/浪费大/人效低/安全事故/插单/库存高/产能闲置/过度承诺</span></div></div>
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">供应链5大痛点</span><br><span class="sub-desc">价格波动/供应不及时/库存积压/供应商单一/采购回扣</span></div></div>
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">研发3大痛点</span><br><span class="sub-desc">进度慢错失机会/技术人才流失/产品不符合需求</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LAYER 3: 方案交付 ====== -->
+<div class="section-wrap"><span class="section-title">第三层：方案交付结构（最终卖什么）</span></div>
+
+<div class="branch-row">
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header red"><span class="icon">🏗</span> 四大板块解决方案</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">① 交易（起点）</span><br><span class="sub-desc">以业绩倒推：产品目标+销售目标</span></div></div>
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">② 营销</span><br><span class="sub-desc">新客/续费/裂变/合伙人</span></div></div>
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">③ 机制</span><br><span class="sub-desc">薪酬/绩效/PK/对赌/裂变/合伙人</span></div></div>
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">④ 人才</span><br><span class="sub-desc">招聘/架构/竞聘/晋升/培训/盘点</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header teal"><span class="icon">⚙</span> 五大执行模块（OPP呈现）</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot teal"></span><div><span class="sub-label">执行的范围</span><br><span class="sub-desc">目标拆解：从年度→季度→月度→岗位KPI</span></div></div>
+        <div class="sub-item"><span class="sub-dot teal"></span><div><span class="sub-label">执行的动力</span><br><span class="sub-desc">绩效薪酬：差异化方案让员工主动为目标拼命</span></div></div>
+        <div class="sub-item"><span class="sub-dot teal"></span><div><span class="sub-label">执行的能力</span><br><span class="sub-desc">流程SOP+岗位培训：让每个人知道怎么干</span></div></div>
+        <div class="sub-item"><span class="sub-dot teal"></span><div><span class="sub-label">执行的环境</span><br><span class="sub-desc">晋升双通道+奖惩制度+企业文化</span></div></div>
+        <div class="sub-item"><span class="sub-dot teal"></span><div><span class="sub-label">执行的资源</span><br><span class="sub-desc">人财物盘点：人力架构+预算规划</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 双轮驱动 ====== -->
+<div class="section-wrap"><span class="section-title">核心可视化武器：两个小人图（双轮驱动）</span></div>
+
+<div class="branch-row">
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header blue"><span class="icon">🔵</span> 产品端小人</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">🧠 脑袋：产品</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">第一段：目标</span><br><span class="sub-desc">每产品业绩/成本控制/利润率/人效</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">第二段：机制</span><br><span class="sub-desc">薪酬/绩效/PK/对赌/裂变/合伙人</span></div></div>
+        <div class="sub-item"><span class="sub-dot blue"></span><div><span class="sub-label">第三段：人才</span><br><span class="sub-desc">招聘/架构/竞聘/晋升/培训/盘点</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="branch" style="display:flex;align-items:center;justify-content:center;flex-direction:column;min-width:80px;max-width:80px;">
+    <div style="font-size:28px;text-align:center;">🤝</div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:4px;">拉手<br>联动</div>
+  </div>
+
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header green"><span class="icon">🟢</span> 营销端小人</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">🧠 脑袋：营销</span></div></div>
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">第一段：目标</span><br><span class="sub-desc">新客/续费/市场份额/销售业绩</span></div></div>
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">第二段：机制</span><br><span class="sub-desc">合伙人/裂变/激励/连锁加盟</span></div></div>
+        <div class="sub-item"><span class="sub-dot green"></span><div><span class="sub-label">第三段：人才</span><br><span class="sub-desc">销售团队招聘/培训/竞聘/晋升</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="branch-row" style="margin-top:8px;">
+  <div class="branch" style="max-width:100%;">
+    <div class="branch-card">
+      <div class="branch-header slate"><span class="icon">🦵</span> 两条腿：对标管理 + 战略定位（成本最低差异化竞争+聚焦赛道）</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 实战SOP ====== -->
+<div class="section-wrap"><span class="section-title">一天现场执行SOP</span></div>
+
+<div class="branch-row">
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header purple"><span class="icon">📋</span> 四段式现场节奏</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">上午（2h）：先跟老板聊</span><br><span class="sub-desc">探定影达挖掘需求→对标管理+差异化竞争定方向→引导老板自己说出目标</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">中午：整理思路出方案</span><br><span class="sub-desc">画两个小人图→产品线+营销线各配目标→机制→人才→准备培训内容</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">下午（2h）：给团队做培训</span><br><span class="sub-desc">核心目的：把团队打动了→讲解决思路+1-2个工具→卖解决方案不是卖课</span></div></div>
+        <div class="sub-item"><span class="sub-dot purple"></span><div><span class="sub-label">培训后：再约老板谈落地</span><br><span class="sub-desc">培训打动团队→筛选问题→BCD调研→上门诊断→组织方案→四板块交付</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header orange"><span class="icon">🛡</span> 异议处理三道防线</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">防线一："我不需要学习"</span><br><span class="sub-desc">不学习=团队不共识=谁也解决不了你<br>老师帮你做升维和迭代</span></div></div>
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">防线二："给我出五年规划"</span><br><span class="sub-desc">规划需要深度调研诊断→先给初步思路→先学习打基础→再出详细规划</span></div></div>
+        <div class="sub-item"><span class="sub-dot orange"></span><div><span class="sub-label">防线三："预算有限/担心效果"</span><br><span class="sub-desc">不做这件事的代价>做这件事的投入<br>先体验评估再决策→风险最低</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 底层信念 ====== -->
+<div class="section-wrap"><span class="section-title">底层心法：三个核心信念</span></div>
+
+<div class="branch-row">
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header red"><span class="icon">💡</span> 信念递进链</div>
+      <div class="branch-body">
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">① 问题就是你们团队造成的</span><br><span class="sub-desc">→ 卸掉客户外归因心理，迫使向内看，承认需要外部帮助</span></div></div>
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">② 团队升级和迭代才能解决根本问题</span><br><span class="sub-desc">→ 锚定方案方向：不是换策略，是升级人→老师帮你做升维</span></div></div>
+        <div class="sub-item"><span class="sub-dot red"></span><div><span class="sub-label">③ 老师帮不断问问题，不是带不来结果</span><br><span class="sub-desc">→ 顾问定位：引导而非代劳→客户自己得出的结论执行意愿强十倍</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="branch">
+    <div class="branch-card">
+      <div class="branch-header slate"><span class="icon">📊</span> 组织系统八大模块</div>
+      <div class="branch-body">
+        <div class="tag-list">
+          <span class="tag blue">目标规划</span>
+          <span class="tag green">组织架构</span>
+          <span class="tag orange">工作分析</span>
+          <span class="tag purple">绩效考核</span>
+          <span class="tag red">薪酬体系</span>
+          <span class="tag teal">生涯规划</span>
+          <span class="tag blue">培训体系</span>
+          <span class="tag green">招聘体系</span>
+          <span class="tag orange">运营管控</span>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted);">
+          每个模块含：核心问题清单 + 老板核心痛苦 + 解决方向
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 方案矩阵 ====== -->
+<div class="section-wrap"><span class="section-title">产品方案阶梯</span></div>
+
+<div class="branch-row">
+  <div class="wide-card" style="flex:1;">
+    <table class="mini-table">
+      <tr><td style="color:var(--blue);">入门级</td><td><strong>自建系统学习方案</strong></td><td>6.6万/3人</td><td>三天两晚操盘手课程 → 适合先打基础</td></tr>
+      <tr><td style="color:var(--green);">核心级</td><td><strong>BC集中咨询联合研发</strong></td><td>17.99万-27.79万</td><td>诊断→方案班→本地陪跑 → 90%同规模选择</td></tr>
+      <tr><td style="color:var(--purple);">全案级</td><td><strong>总部专家咨询辅导</strong></td><td>30万-300万</td><td>10天调研→全年陪跑 → 1亿以上扩张期企业</td></tr>
+    </table>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted);">
+      阶梯路径：1680元研讨会（双向评估）→ BC方案搭体系 → 全案陪跑做深做透
+    </div>
+  </div>
+</div>
+
+<!-- ====== 关键语录 ====== -->
+<div class="section-wrap"><span class="section-title">关键实战语录</span></div>
+
+<div class="branch-row">
+  <div class="wide-card">
+    <table class="mini-table">
+      <tr><td>破认知</td><td>"成本最低的差异化竞争是什么？聚焦什么赛道？"</td></tr>
+      <tr><td>建信任</td><td>"人事管的是入职考勤发工资，组织系统管的是你的利润、你的精力、你的增长、你的企业生死。"</td></tr>
+      <tr><td>塑价值</td><td>"你天天头疼的员工不干活、部门扯皮、目标完不成——本质不是人的问题，是组织系统的系统性缺失。"</td></tr>
+      <tr><td>推行动</td><td>"不做这件事的代价，比做这件事的投入大得多。"</td></tr>
+      <tr><td>定方向</td><td>"由交易出发→目标→机制→人才。四个板块解决问题。"</td></tr>
+      <tr><td>收成交</td><td>"不是努力的事，必拿结果。你把这个图画出来，他一看就懂，讲完就打动我了。"</td></tr>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">整合来源：组织系统逻辑图 · "发展路9"录音文字 · 顾问式拜访模型PPT · 法兰拜访流程 · 核心痛点总结 · 研产销问题矩阵</div>
+
+</div>
+</body>
+</html>

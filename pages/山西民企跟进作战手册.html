@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山西民企跟进作战手册</title>
+<style>
+  :root{--ink:#1a2333;--sub:#5a6678;--line:#e3e8f0;--bg:#f4f6fa;--card:#fff;--blue:#2563eb;--blue-bg:#eef3fe;--green:#059669;--green-bg:#ecfdf5;--amber:#d97706;--amber-bg:#fffbeb;--red:#dc2626;--red-bg:#fef2f2;--violet:#7c3aed;--violet-bg:#f5f3ff;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:15px}
+  .wrap{max-width:1120px;margin:0 auto;padding:28px 20px 60px}
+  header.hero{background:linear-gradient(135deg,#1b2a4a,#2563eb);color:#fff;border-radius:16px;padding:34px;margin-bottom:22px}
+  header.hero h1{font-size:26px;margin-bottom:8px}
+  header.hero .sub{opacity:.85;font-size:13.5px}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:22px}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .metric .v{font-size:20px;font-weight:700;color:var(--blue)}
+  .metric .k{font-size:12.5px;color:var(--sub);margin-top:2px}
+  .metric.red .v{color:var(--red)}.metric.amber .v{color:var(--amber)}.metric.green .v{color:var(--green)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px}
+  h2{font-size:18px;margin-bottom:12px;padding-left:10px;border-left:4px solid var(--blue)}
+  h3{font-size:15px;margin:14px 0 8px;color:#24304a}
+  .city-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:800px){.city-grid{grid-template-columns:1fr}}
+  .city{background:#f8fafd;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .city .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .city h3{font-size:15px;margin:0}
+  .city .tag{font-size:12px;padding:2px 10px;border-radius:12px;font-weight:600}
+  .tag-red{background:var(--red-bg);color:var(--red)}.tag-amber{background:var(--amber-bg);color:var(--amber)}.tag-green{background:var(--green-bg);color:var(--green)}.tag-blue{background:var(--blue-bg);color:var(--blue)}
+  .city .stat{font-size:13px;color:var(--sub);margin-bottom:6px}
+  .city .lst{font-size:13px;color:#3a4557;line-height:1.55}
+  .action-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  @media(max-width:800px){.action-grid{grid-template-columns:1fr}}
+  .action{background:#f8fafd;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .action h4{font-size:14px;margin-bottom:8px}
+  .action ul{font-size:13px;padding-left:18px;color:#3a4557}
+  .action.red-bg{background:var(--red-bg);border-color:#f3c2bd}
+  .action.amber-bg{background:var(--amber-bg);border-color:#f5d9ae}
+  .action.blue-bg{background:var(--blue-bg);border-color:#c7d6f7}
+  .note{background:var(--amber-bg);border:1px solid #f5d9ae;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:13px;color:#7c4a12}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+  th{background:#f0f3f9;text-align:left;padding:6px 8px;border:1px solid var(--line);font-weight:600}
+  td{padding:6px 8px;border:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fafbfd}
+  footer{margin-top:20px;text-align:center;color:#8a94a6;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>山西民企跟进作战手册</h1>
+  <div class="sub">基于现有 1,891 名客户（6,150 万营收） × 全省 11 市民企调研（百强 100 家 + 300+ 具名企业）的交叉匹配</div>
+</header>
+
+<div class="metrics">
+  <div class="metric"><div class="v">1,891 家</div><div class="k">总客户数 · 1,223 家有金额</div></div>
+  <div class="metric"><div class="v">6,150 万</div><div class="k">总营收 · 中位数 0.2 万</div></div>
+  <div class="metric green"><div class="v">8.5 万</div><div class="k">制造业客单 · 230 家/1,957 万</div></div>
+  <div class="metric amber"><div class="v">11.3 / 11.9 万</div><div class="k">吕梁/朔州平均客单（全省最高）</div></div>
+  <div class="metric red"><div class="v">165 家</div><div class="k">已注销/吊销需清洗</div></div>
+  <div class="metric"><div class="v">72 家</div><div class="k">≥20 万核心客户 · 大客线</div></div>
+</div>
+
+<section>
+  <h2>🔴 紧急线：清洗客户池（本周）</h2>
+  <div class="action-grid">
+    <div class="action red-bg"><h4 style="color:#dc2626">165 家流失</h4><ul><li>已注销 139 + 吊销 21 + 迁出 5</li><li>CRM 标记"已流失"，停止触达</li></ul></div>
+    <div class="action amber-bg"><h4 style="color:#d97706">48 家年报异常</h4><ul><li>仍显示"存续"但年报停在旧年份</li><li>电话确认经营状态再决定</li></ul></div>
+    <div class="action blue-bg"><h4 style="color:#2563eb">661 家金额缺失</h4><ul><li>35% 客户消费金额不详</li><li>财务系统补全 → 做 RFM 分层</li></ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>分市跟进策略（11 市）</h2>
+  <div class="city-grid">
+    <div class="city">
+      <div class="hd"><h3>吕梁</h3><span class="tag tag-red">第一优先</span></div>
+      <div class="stat">现有 96 家/1,084 万 · 客单 11.3 万 · 百强 14 家</div>
+      <div class="lst"><b>画像：</b>TOP20 中 5 家在吕梁（鑫晋商生物、元泰高导、嘉隆达公路、中天锐能耐火、珂霖珠宝）。<br><b>目标：</b>兴安化工、信发化工、田园化工、奥凯达、晋茂能源、义望铁合金、利虎青耀玻璃（小巨人）、汾阳王酒业、汾杏、华鑫肥业、汇丰兴业/森泽煤铝/鑫飞配套服务商。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>朔州</h3><span class="tag tag-red">第一优先</span></div>
+      <div class="stat">现有 20 家/238 万 · 客单 11.9 万 · 百强 4 家</div>
+      <div class="lst"><b>画像：</b>玉竹新材料 190 万（最高单客）。<br><b>目标：</b>晋豫融合新材料、富驰铝业、程源建材、振兴高岭土、全盛化工（省级专精特新，同画像）；嘉明/佳美乐/华缶/东盛陶瓷；金沙滩羔羊肉业；献果园/绿都沙棘。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>晋中</h3><span class="tag tag-amber">第二优先</span></div>
+      <div class="stat">现有 111 家/715 万 · 百强 18 家 · 4 个省级专业镇</div>
+      <div class="lst"><b>画像：</b>昌泰丰铸钢（80 万）→ 太谷玛钢专业镇全群；聚鑫钙业（灵石 118 万）。<br><b>目标：</b>太谷玛钢规上企业群、祁县大华玻璃等玻璃企业群、介休安泰/昌盛/金泉配套、灵石煤企群、尚太锂电周边。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>运城</h3><span class="tag tag-amber">第二优先</span></div>
+      <div class="stat">现有 89 家/474 万 · 百强 17 家 · 已有深度调研</div>
+      <div class="lst"><b>画像：</b>裕和塑业（永济 75 万）。闻喜 90+ 家县级名录已就绪。<br><b>目标：</b>瑞格/八达/振鑫镁业、宏伟等闻喜玻璃规上企业、万荣外加剂 56 家、盐湖水泵 149 户、永济电机配套群。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>忻州</h3><span class="tag tag-amber">第二优先</span></div>
+      <div class="stat">现有 50 家/243 万 · 百强 3 家 · 定襄法兰 319 户</div>
+      <div class="lst"><b>画像：</b>金鼎泰金属制品（74 万）→ 定襄 319 户法兰企业天然名单。<br><b>目标：</b>管家营、天宝、恒跃/宇特、冠力、成业（小巨人）、利国磁性（小巨人）等 43 家专精特新；原平佳诚/兴胜煤机；代县雁门山黄酒。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>太原</h3><span class="tag tag-green">第三优先</span></div>
+      <div class="stat">现有 561 家/2,348 万 · 客单 4.2 万 · 百强 14 家</div>
+      <div class="lst"><b>策略：</b>主战场是升级线——561 家中大量 0.2 万基础客单推升级。<br><b>目标：</b>综改区高企群、清徐 81 家醋企、太钢大明供应链、诚信化工/奥特莱物流等大客户同行业企业。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>晋城</h3><span class="tag tag-green">第三优先</span></div>
+      <div class="stat">现有 44 家/190 万 · 百强 4 家 · 铸造双专业镇</div>
+      <div class="lst"><b>目标：</b>泽州铸造 52 家（亚鑫/洛凯威/皇辉/鑫环球）、高平泷氏铸业配套、康硕电气供应链、阳城陶瓷 14 家规上、晋钢供应商体系。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>临汾</h3><span class="tag tag-green">第三优先</span></div>
+      <div class="stat">现有 59 家/98 万 · 客单 1.7 万最低 · 百强 6 家</div>
+      <div class="lst"><b>策略：</b>客单低=渗透浅，先深耕存量；侯马经开区 310 亿新客池。<br><b>目标：</b>侯马威创动力、中信交通防护、南钢合力；襄汾万鑫达/星原/新金山配套；隰县玉露香梨龙头（野里垣、广鑫）。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>长治</h3><span class="tag tag-green">第四优先</span></div>
+      <div class="stat">现有 57 家/139 万 · 客单 2.4 万 · 百强 18 家</div>
+      <div class="lst"><b>目标：</b>襄垣山力铂纳/奥鹏轮毂/恒昌元电池（制造类）、长子唯诺达/卓联锐科、潞宝/金鼎钢铁煤焦化供应链。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>阳泉</h3><span class="tag tag-green">第四优先</span></div>
+      <div class="stat">现有客户极少 · 百强 0 家 · 耐火 233 家</div>
+      <div class="lst"><b>画像：</b>你有耐火大客户（中天锐能·吕梁 122 万）→ 阳泉 233 家耐火企业是最大 lookalike 池。<br><b>目标：</b>郊区 27 家规上耐火企业、欧贝姆纳米、东大土壤、亮晶晶砂锅。</div>
+    </div>
+    <div class="city">
+      <div class="hd"><h3>大同</h3><span class="tag tag-green">第四优先</span></div>
+      <div class="stat">现有 22 家/31 万 · 客单 1.4 万 · 百强 2 家</div>
+      <div class="lst"><b>目标：</b>金盛豪达炭业/华青环保（小巨人，活性炭）、同药集团/同达药业、唯实重工/巴什卡机械（小巨人）、万昌智慧物流、三利集团黄花。</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>三条行动线</h2>
+  <div class="action-grid">
+    <div class="action red-bg"><h4 style="color:#dc2626">🔴 紧急：清洗</h4><ul><li>165 家流失 → 标记停触</li><li>48 家年报异常 → 电话确认</li><li>661 家金额缺失 → 财务补全</li></ul></div>
+    <div class="action amber-bg"><h4 style="color:#d97706">🟠 大客线：72 家深维</h4><ul><li>新材料→朔州/吕梁专精特新</li><li>铸造→太谷玛钢/晋城/定襄法兰</li><li>耐火→阳泉 233 家</li><li>化工→孝义/潞城/襄汾化工园</li><li>每户大客要 2-3 个转介绍</li></ul></div>
+    <div class="action blue-bg"><h4 style="color:#2563eb">🟠 基础线：878 家升级</h4><ul><li>太原 561 家优先（密度高）</li><li>推"1 万+档"标准套餐</li><li>制造业：生产管理/资质类</li><li>电力：安全合规类</li></ul></div>
+  </div>
+</section>
+
+<div class="note"><b>数据缺口</b>：35% 客户消费金额缺失、缺交易时间与产品品类→补全后可做 RFM 分层。全省 20 余个山区县民企公开名录空白→若客户集中在某山区县需单独专项查。百强中约 60 家能源类企业与制造业客群画像匹配度低→建议聚焦新材料/金属加工/化工/建材/食品加工五个行业。</div>
+
+<footer>山西民企跟进作战手册 · 2026-08-17 · 基于 1,891 客户 × 全省民企调研</footer>
+</div>
+</body>
+</html>
